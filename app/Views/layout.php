@@ -1,1 +1,67 @@
-<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title><?= esc($title ?? 'Sistem Permohonan JTI') ?></title><style>body{font-family:Arial,sans-serif;margin:0;background:#f6f8fb;color:#1f2937}nav{background:#16324f;color:#fff;padding:14px 24px;display:flex;justify-content:space-between}main{max-width:1100px;margin:28px auto;padding:0 18px}.card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 4px 14px #0001;margin-bottom:18px}table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #eee;text-align:left}input,select,textarea{width:100%;padding:10px;margin:6px 0 12px;border:1px solid #ccd4df;border-radius:8px;box-sizing:border-box}button{background:#1d5fa7;color:white;border:0;padding:10px 14px;border-radius:8px;cursor:pointer}.badge{padding:5px 9px;border-radius:999px;background:#edf2f7;display:inline-block}.alert{padding:10px 14px;border-radius:8px;background:#fff7ed;margin-bottom:12px}</style></head><body><nav><strong>Sistem Permohonan JTI</strong><span><?= esc(session('nama_lengkap') ?? '') ?> · <a href="<?= site_url('logout') ?>" style="color:#fff">Logout</a></span></nav><main><?php if(session('success')): ?><div class="alert"><?= esc(session('success')) ?></div><?php endif; ?><?php if(session('error')): ?><div class="alert"><?= esc(session('error')) ?></div><?php endif; ?><?= $this->renderSection('content') ?></main></body></html>
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        <?= $this->renderSection('title') ?: 'JTI Signature' ?>
+    </title>
+
+
+    <!-- ========================================
+         FONT AWESOME
+    ========================================= -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+
+    <!-- ========================================
+         CSS GLOBAL
+    ========================================= -->
+    <link
+        rel="stylesheet"
+        href="<?= base_url('assets/css/app.css') ?>"
+    >
+
+
+    <!-- ========================================
+         CSS ADMIN DASHBOARD
+    ========================================= -->
+    <link
+        rel="stylesheet"
+        href="<?= base_url('assets/css/admin/dashboard.css') ?>"
+    >
+
+
+    <?= $this->renderSection('styles') ?>
+
+</head>
+
+
+<body>
+
+    <!-- ========================================
+         MAIN APPLICATION
+    ========================================= -->
+
+    <?= $this->renderSection('content') ?>
+
+
+    <!-- ========================================
+         JAVASCRIPT
+    ========================================= -->
+
+    <?= $this->renderSection('scripts') ?>
+
+</body>
+
+</html>
