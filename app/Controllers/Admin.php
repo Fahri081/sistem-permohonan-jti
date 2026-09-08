@@ -8,16 +8,20 @@ use CodeIgniter\Controller;
 
 class Admin extends Controller
 {
+    /**
+     * ==========================================
+     * DASHBOARD ADMIN
+     * ==========================================
+     */
     public function index()
     {
         $permohonan = new PermohonanModel();
 
         /*
-         * ==========================================
-         * DATA PERMOHONAN
-         * ==========================================
+         * ------------------------------------------
+         * DATA PERMOHONAN TERBARU
+         * ------------------------------------------
          */
-
         $data['permohonan'] = $permohonan
             ->select(
                 'permohonan.*,
@@ -46,54 +50,53 @@ class Admin extends Controller
 
 
         /*
-         * ==========================================
+         * ------------------------------------------
          * STATISTIK DASHBOARD
-         * ==========================================
+         *
+         * 1 = DIAJUKAN
+         * 2 = DIPROSES
+         * 3 = DITOLAK
+         * 4 = SELESAI
+         * 5 = DIAMBIL
+         * ------------------------------------------
          */
-
         $data['statistik'] = [
-            'total' => $permohonan->countAll(),
+            'total' => (new PermohonanModel())
+                ->countAll(),
 
-            'diajukan' => $permohonan
+            'diajukan' => (new PermohonanModel())
                 ->where('id_status', 1)
                 ->countAllResults(),
 
-            'ditolak' => $permohonan
+            'diproses' => (new PermohonanModel())
                 ->where('id_status', 2)
                 ->countAllResults(),
 
-            'diproses' => $permohonan
+            'ditolak' => (new PermohonanModel())
                 ->where('id_status', 3)
                 ->countAllResults(),
 
-            'selesai' => $permohonan
+            'selesai' => (new PermohonanModel())
                 ->where('id_status', 4)
                 ->countAllResults(),
 
-            'diambil' => $permohonan
+            'diambil' => (new PermohonanModel())
                 ->where('id_status', 5)
                 ->countAllResults(),
         ];
 
 
         /*
-         * ==========================================
-         * AKTIVITAS TERBARU
-         * ==========================================
+         * ------------------------------------------
+         * 5 AKTIVITAS TERBARU
+         * ------------------------------------------
          */
-
         $data['aktivitas'] = array_slice(
             $data['permohonan'],
             0,
             5
         );
 
-
-        /*
-         * ==========================================
-         * TAMPILKAN DASHBOARD
-         * ==========================================
-         */
 
         return view(
             'admin/dashboard',
@@ -103,7 +106,141 @@ class Admin extends Controller
 
 
     /**
-     * Menampilkan detail permohonan.
+     * ==========================================
+     * SEMUA PERMOHONAN
+     * ==========================================
+     */
+    public function all()
+    {
+        $permohonan = new PermohonanModel();
+
+        /*
+         * Ambil keyword pencarian
+         */
+        $keyword = trim(
+            (string) $this->request->getGet('keyword')
+        );
+
+        /*
+         * Ambil filter status
+         */
+        $status = $this->request->getGet('status');
+
+
+        /*
+         * Query dasar
+         */
+        $builder = $permohonan
+            ->select(
+                'permohonan.*,
+                 users.nama_lengkap,
+                 users.nim,
+                 tujuan.nama_tujuan,
+                 status.nama_status'
+            )
+            ->join(
+                'users',
+                'users.id_user = permohonan.id_user'
+            )
+            ->join(
+                'tujuan',
+                'tujuan.id_tujuan = permohonan.id_tujuan'
+            )
+            ->join(
+                'status',
+                'status.id_status = permohonan.id_status'
+            );
+
+
+        /*
+         * ------------------------------------------
+         * SEARCH
+         * ------------------------------------------
+         */
+        if ($keyword !== '') {
+
+            $builder
+                ->groupStart()
+                ->like(
+                    'users.nama_lengkap',
+                    $keyword
+                )
+                ->orLike(
+                    'users.nim',
+                    $keyword
+                )
+                ->orLike(
+                    'permohonan.id_permohonan',
+                    $keyword
+                )
+                ->orLike(
+                    'tujuan.nama_tujuan',
+                    $keyword
+                )
+                ->groupEnd();
+        }
+
+
+        /*
+         * ------------------------------------------
+         * FILTER STATUS
+         *
+         * 1 = DIAJUKAN
+         * 2 = DIPROSES
+         * 3 = DITOLAK
+         * 4 = SELESAI
+         * 5 = DIAMBIL
+         * ------------------------------------------
+         */
+        if (
+            $status !== null &&
+            $status !== '' &&
+            in_array(
+                $status,
+                ['1', '2', '3', '4', '5'],
+                true
+            )
+        ) {
+
+            $builder->where(
+                'permohonan.id_status',
+                (int) $status
+            );
+        }
+
+
+        /*
+         * ------------------------------------------
+         * DATA HASIL
+         * ------------------------------------------
+         */
+        $data['permohonan'] = $builder
+            ->orderBy(
+                'permohonan.id_permohonan',
+                'DESC'
+            )
+            ->findAll();
+
+
+        /*
+         * Kirim kembali filter ke View
+         */
+        $data['keyword'] = $keyword;
+
+        $data['statusFilter'] = $status;
+
+
+        return view(
+            'admin/permohonan',
+            $data
+        );
+    }
+
+
+    /**
+     * ==========================================
+     * DETAIL PERMOHONAN
+     * ==========================================
      */
     public function show(int $id)
     {
@@ -133,21 +270,32 @@ class Admin extends Controller
             )
             ->find($id);
 
+
+        /*
+         * Permohonan tidak ditemukan
+         */
         if (! $row) {
+
             return redirect()
-                ->to('/admin')
+                ->to('/admin/permohonan')
                 ->with(
                     'error',
                     'Permohonan tidak ditemukan.'
                 );
         }
 
+
+        /*
+         * Ambil seluruh berkas
+         * milik permohonan
+         */
         $berkas = (new BerkasPermohonanModel())
             ->where(
                 'id_permohonan',
                 $id
             )
             ->findAll();
+
 
         return view(
             'admin/show',
@@ -160,25 +308,48 @@ class Admin extends Controller
 
 
     /**
-     * Memperbarui status permohonan.
+     * ==========================================
+     * UPDATE STATUS PERMOHONAN
+     * ==========================================
      */
     public function updateStatus(int $id)
     {
         $statusName =
-            $this->request->getPost('status');
+            strtoupper(
+                trim(
+                    (string) $this->request
+                        ->getPost('status')
+                )
+            );
 
+
+        /*
+         * Mapping sesuai database
+         *
+         * 1 = DIAJUKAN
+         * 2 = DIPROSES
+         * 3 = DITOLAK
+         * 4 = SELESAI
+         * 5 = DIAMBIL
+         */
         $map = [
             'DIAJUKAN' => 1,
-            'DITOLAK' => 2,
-            'DIPROSES' => 3,
-            'SELESAI' => 4,
-            'DIAMBIL' => 5,
+            'DIPROSES' => 2,
+            'DITOLAK'  => 3,
+            'SELESAI'  => 4,
+            'DIAMBIL'  => 5,
         ];
+
 
         $statusId =
             $map[$statusName] ?? null;
 
+
+        /*
+         * Validasi status
+         */
         if (! $statusId) {
+
             return redirect()
                 ->back()
                 ->with(
@@ -187,21 +358,40 @@ class Admin extends Controller
                 );
         }
 
+
+        /*
+         * Data yang akan diupdate
+         */
         $data = [
             'id_status' => $statusId,
         ];
 
+
+        /*
+         * Jika selesai
+         */
         if ($statusName === 'SELESAI') {
+
             $data['tanggal_selesai'] =
                 date('Y-m-d H:i:s');
         }
 
+
+        /*
+         * Jika sudah diambil
+         */
         if ($statusName === 'DIAMBIL') {
+
             $data['tanggal_diambil'] =
                 date('Y-m-d H:i:s');
         }
 
+
+        /*
+         * Jika ditolak
+         */
         if ($statusName === 'DITOLAK') {
+
             $data['keterangan_penolakan'] =
                 $this->request
                     ->getPost(
@@ -209,20 +399,30 @@ class Admin extends Controller
                     );
         }
 
+
+        /*
+         * Update database
+         */
         (new PermohonanModel())
-            ->update($id, $data);
+            ->update(
+                $id,
+                $data
+            );
+
 
         return redirect()
             ->back()
             ->with(
                 'success',
-                'Status permohonan diperbarui.'
+                'Status permohonan berhasil diperbarui.'
             );
     }
 
 
     /**
-     * Memperbarui status satu berkas.
+     * ==========================================
+     * UPDATE STATUS BERKAS
+     * ==========================================
      */
     public function updateBerkasStatus(int $id)
     {
@@ -230,6 +430,10 @@ class Admin extends Controller
             (int) $this->request
                 ->getPost('selesai') === 1;
 
+
+        /*
+         * Update status berkas
+         */
         (new BerkasPermohonanModel())
             ->update(
                 $id,
@@ -243,17 +447,20 @@ class Admin extends Controller
                 ]
             );
 
+
         return redirect()
             ->back()
             ->with(
                 'success',
-                'Status berkas diperbarui.'
+                'Status berkas berhasil diperbarui.'
             );
     }
 
 
     /**
-     * Menandai permohonan sudah diambil.
+     * ==========================================
+     * TANDAI SUDAH DIAMBIL
+     * ==========================================
      */
     public function markPickedUp(int $id)
     {
@@ -267,6 +474,7 @@ class Admin extends Controller
                         date('Y-m-d H:i:s'),
                 ]
             );
+
 
         return redirect()
             ->back()
