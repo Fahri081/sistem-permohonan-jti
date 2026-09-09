@@ -7,206 +7,280 @@ Dashboard Admin - JTI Signature
 
 <?= $this->section('content') ?>
 
-<div class="dashboard-page">
+<div class="admin-dashboard">
 
-    <!-- =====================================
-         PAGE HEADER
-    ====================================== -->
+    <!-- =========================================
+         HEADER
+    ========================================== -->
 
-    <div class="dashboard-header">
+    <div class="dashboard-intro">
 
         <div>
+
+            <span class="eyebrow">
+                ADMINISTRATOR
+            </span>
 
             <h1>
                 Dashboard Admin
             </h1>
 
             <p>
-                Selamat datang kembali, Admin!
-                Berikut adalah ringkasan status keseluruhan permohonan
-                tanda tangan di sistem saat ini.
+                Pantau dan kelola seluruh proses permohonan
+                tanda tangan akademik dalam satu tempat.
             </p>
+
+        </div>
+
+        <div class="intro-date">
+
+            <i class="fa-regular fa-calendar"></i>
+
+            <span>
+                Hari ini
+            </span>
 
         </div>
 
     </div>
 
 
-    <!-- =====================================
-         STATISTICS
-    ====================================== -->
+    <!-- =========================================
+         STATISTIC CARDS
+    ========================================== -->
 
     <div class="stats-grid">
 
+
         <!-- TOTAL -->
 
-        <div class="stat-card">
+        <article class="stat-card">
 
-            <div class="stat-icon total">
+            <div class="stat-top">
 
-                <i class="fa-regular fa-folder-open"></i>
+                <div class="stat-icon total">
+
+                    <i class="fa-regular fa-folder-open"></i>
+
+                </div>
+
+                <span class="stat-caption">
+                    Keseluruhan
+                </span>
 
             </div>
 
-            <div class="stat-content">
+            <div class="stat-bottom">
+
+                <strong>
+                    <?= number_format($statistik['total']) ?>
+                </strong>
 
                 <span>
                     Total Permohonan
                 </span>
 
-                <strong>
-                    <?= $statistik['total'] ?>
-                </strong>
-
             </div>
 
-        </div>
+        </article>
 
 
         <!-- DIAJUKAN -->
 
-        <div class="stat-card">
+        <article class="stat-card">
 
-            <div class="stat-icon submitted">
+            <div class="stat-top">
 
-                <i class="fa-solid fa-circle-info"></i>
+                <div class="stat-icon submitted">
+
+                    <i class="fa-solid fa-circle-info"></i>
+
+                </div>
+
+                <span class="stat-caption blue">
+                    Menunggu
+                </span>
 
             </div>
 
-            <div class="stat-content">
+            <div class="stat-bottom">
+
+                <strong>
+                    <?= number_format($statistik['diajukan']) ?>
+                </strong>
 
                 <span>
                     Diajukan
                 </span>
 
-                <strong>
-                    <?= $statistik['diajukan'] ?>
-                </strong>
-
             </div>
 
-        </div>
+        </article>
 
 
         <!-- DIPROSES -->
 
-        <div class="stat-card">
+        <article class="stat-card">
 
-            <div class="stat-icon processing">
+            <div class="stat-top">
 
-                <i class="fa-regular fa-clock"></i>
+                <div class="stat-icon processing">
+
+                    <i class="fa-regular fa-clock"></i>
+
+                </div>
+
+                <span class="stat-caption orange">
+                    Aktif
+                </span>
 
             </div>
 
-            <div class="stat-content">
+            <div class="stat-bottom">
+
+                <strong>
+                    <?= number_format($statistik['diproses']) ?>
+                </strong>
 
                 <span>
                     Diproses
                 </span>
 
-                <strong>
-                    <?= $statistik['diproses'] ?>
-                </strong>
-
             </div>
 
-        </div>
+        </article>
 
 
         <!-- SELESAI -->
 
-        <div class="stat-card">
+        <article class="stat-card">
 
-            <div class="stat-icon completed">
+            <div class="stat-top">
 
-                <i class="fa-regular fa-circle-check"></i>
+                <div class="stat-icon completed">
+
+                    <i class="fa-regular fa-circle-check"></i>
+
+                </div>
+
+                <span class="stat-caption green">
+                    Berhasil
+                </span>
 
             </div>
 
-            <div class="stat-content">
+            <div class="stat-bottom">
+
+                <strong>
+                    <?= number_format($statistik['selesai']) ?>
+                </strong>
 
                 <span>
                     Selesai
                 </span>
 
-                <strong>
-                    <?= $statistik['selesai'] ?>
-                </strong>
-
             </div>
 
-        </div>
+        </article>
 
 
         <!-- DITOLAK -->
 
-        <div class="stat-card">
+        <article class="stat-card">
 
-            <div class="stat-icon rejected">
+            <div class="stat-top">
 
-                <i class="fa-regular fa-circle-xmark"></i>
+                <div class="stat-icon rejected">
+
+                    <i class="fa-regular fa-circle-xmark"></i>
+
+                </div>
+
+                <span class="stat-caption red">
+                    Perlu perhatian
+                </span>
 
             </div>
 
-            <div class="stat-content">
+            <div class="stat-bottom">
+
+                <strong>
+                    <?= number_format($statistik['ditolak']) ?>
+                </strong>
 
                 <span>
                     Ditolak
                 </span>
 
-                <strong>
-                    <?= $statistik['ditolak'] ?>
-                </strong>
-
             </div>
 
-        </div>
+        </article>
 
 
-        <!-- DIAMBIL -->
+        <!-- DIAMBIL - FEATURED -->
 
-        <div class="stat-card">
+        <article class="stat-card featured">
 
-            <div class="stat-icon picked">
+            <div class="featured-decoration"></div>
 
-                <i class="fa-solid fa-box-archive"></i>
+            <div class="stat-top">
 
-            </div>
+                <div class="stat-icon featured-icon">
 
-            <div class="stat-content">
+                    <i class="fa-solid fa-box-archive"></i>
 
-                <span>
-                    Diambil
+                </div>
+
+                <span class="featured-label">
+                    Completed
                 </span>
 
+            </div>
+
+            <div class="featured-content">
+
                 <strong>
-                    <?= $statistik['diambil'] ?>
+                    <?= number_format($statistik['diambil']) ?>
                 </strong>
+
+                <span>
+                    Siap Diambil
+                </span>
 
             </div>
 
-        </div>
+            <div class="featured-arrow">
+
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+
+            </div>
+
+        </article>
+
 
     </div>
 
 
-    <!-- =====================================
-         AKTIVITAS
-    ====================================== -->
+    <!-- =========================================
+         ACTIVITY SECTION
+    ========================================== -->
 
     <section class="activity-section">
 
-        <div class="section-header">
+        <div class="section-heading">
 
             <div>
+
+                <span class="section-label">
+                    MONITORING
+                </span>
 
                 <h2>
                     Aktivitas Terbaru
                 </h2>
 
                 <p>
-                    Berikut adalah aktivitas terbaru
-                    pada sistem.
+                    Aktivitas permohonan terbaru dalam sistem.
                 </p>
 
             </div>
@@ -228,56 +302,168 @@ Dashboard Admin - JTI Signature
 
         <div class="activity-card">
 
+            <div class="activity-card-header">
+
+                <div>
+                    Permohonan Terbaru
+                </div>
+
+                <span>
+                    <?= count($aktivitas) ?> aktivitas
+                </span>
+
+            </div>
+
+
             <?php if (! empty($aktivitas)) : ?>
 
                 <div class="activity-list">
 
-                    <?php foreach ($aktivitas as $p) : ?>
+                    <?php foreach ($aktivitas as $index => $p) : ?>
+
+                        <?php
+
+                        $status =
+                            strtoupper(
+                                $p['nama_status']
+                            );
+
+                        $statusClass =
+                            strtolower($status);
+
+                        ?>
 
                         <div class="activity-item">
 
-                            <div class="activity-icon">
+                            <!-- NUMBER -->
 
-                                <i class="fa-regular fa-file-lines"></i>
+                            <div class="activity-number">
+
+                                <?= str_pad(
+                                    $index + 1,
+                                    2,
+                                    '0',
+                                    STR_PAD_LEFT
+                                ) ?>
 
                             </div>
 
+
+                            <!-- ICON -->
+
+                            <div
+                                class="
+                                    activity-icon
+                                    <?= esc($statusClass) ?>
+                                "
+                            >
+
+                                <?php if ($status === 'DIAJUKAN') : ?>
+
+                                    <i class="fa-solid fa-paper-plane"></i>
+
+                                <?php elseif ($status === 'DIPROSES') : ?>
+
+                                    <i class="fa-regular fa-clock"></i>
+
+                                <?php elseif ($status === 'SELESAI') : ?>
+
+                                    <i class="fa-regular fa-circle-check"></i>
+
+                                <?php elseif ($status === 'DITOLAK') : ?>
+
+                                    <i class="fa-regular fa-circle-xmark"></i>
+
+                                <?php elseif ($status === 'DIAMBIL') : ?>
+
+                                    <i class="fa-solid fa-box-archive"></i>
+
+                                <?php else : ?>
+
+                                    <i class="fa-regular fa-file-lines"></i>
+
+                                <?php endif; ?>
+
+                            </div>
+
+
+                            <!-- INFORMATION -->
 
                             <div class="activity-info">
 
-                                <strong>
+                                <div class="activity-main">
 
-                                    Permohonan Baru:
-                                    <?= esc($p['nama_lengkap']) ?>
+                                    <strong>
 
-                                </strong>
+                                        Permohonan Baru:
+                                        <?= esc(
+                                            $p['nama_lengkap']
+                                        ) ?>
 
-                                <span>
+                                    </strong>
 
-                                    #<?= esc($p['id_permohonan']) ?>
+                                    <span>
 
-                                    •
+                                        #<?= esc(
+                                            $p['id_permohonan']
+                                        ) ?>
 
-                                    <?= esc($p['nama_tujuan']) ?>
+                                    </span>
 
-                                </span>
+                                </div>
+
+
+                                <div class="activity-meta">
+
+                                    <span>
+
+                                        <?= esc(
+                                            $p['nama_tujuan']
+                                        ) ?>
+
+                                    </span>
+
+                                    <span class="meta-dot">
+                                        •
+                                    </span>
+
+                                    <span>
+                                        <?= esc($status) ?>
+                                    </span>
+
+                                </div>
 
                             </div>
 
 
-                            <div class="activity-status">
+                            <!-- STATUS -->
 
-                                <?php
-                                $status = strtoupper(
-                                    $p['nama_status']
-                                );
-                                ?>
+                            <div class="activity-right">
 
                                 <span
-                                    class="status-badge <?= strtolower($status) ?>"
+                                    class="
+                                        activity-status
+                                        <?= esc($statusClass) ?>
+                                    "
                                 >
+
                                     <?= esc($status) ?>
+
                                 </span>
+
+
+                                <a
+                                    href="<?= site_url(
+                                        'admin/permohonan/' .
+                                        $p['id_permohonan']
+                                    ) ?>"
+                                    class="activity-detail"
+                                    title="Lihat detail"
+                                >
+
+                                    <i class="fa-solid fa-chevron-right"></i>
+
+                                </a>
 
                             </div>
 
@@ -287,25 +473,37 @@ Dashboard Admin - JTI Signature
 
                 </div>
 
+
             <?php else : ?>
 
-                <div class="empty-state">
 
-                    <div class="empty-icon">
+                <!-- EMPTY -->
 
-                        <i class="fa-solid fa-inbox"></i>
+                <div class="activity-empty">
+
+                    <div class="empty-symbol">
+
+                        <i class="fa-regular fa-folder-open"></i>
 
                     </div>
 
                     <h3>
-                        Belum ada permohonan
+                        Belum ada aktivitas
                     </h3>
 
                     <p>
-                        Belum ada permohonan yang masuk ke sistem.
+                        Belum ada permohonan baru yang masuk ke sistem.
                     </p>
 
+                    <a
+                        href="<?= site_url('admin/permohonan') ?>"
+                        class="empty-button"
+                    >
+                        Buka Semua Permohonan
+                    </a>
+
                 </div>
+
 
             <?php endif; ?>
 

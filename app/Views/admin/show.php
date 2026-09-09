@@ -4,6 +4,7 @@
 Detail Permohonan - JTI Signature
 <?= $this->endSection() ?>
 
+
 <?= $this->section('content') ?>
 
 <link
@@ -11,65 +12,60 @@ Detail Permohonan - JTI Signature
     href="<?= base_url('assets/css/admin/show.css') ?>"
 >
 
+
 <div class="detail-page">
 
-    <!-- =========================================
-         HEADER
-    ========================================== -->
 
-    <div class="detail-page-header">
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
 
-        <div class="header-left">
+    <div class="detail-header">
+
+        <div class="detail-header-left">
 
             <a
                 href="<?= site_url('admin/permohonan') ?>"
-                class="back-link"
+                class="back-button"
             >
                 <i class="fa-solid fa-arrow-left"></i>
                 Kembali ke Daftar
             </a>
 
-            <div class="request-title-row">
 
-                <h1>
-                    Request #REQ-<?= esc($permohonan['id_permohonan']) ?>
-                </h1>
+            <div class="title-row">
+
+                <div>
+
+                    <div class="title-label">
+                        DETAIL PERMOHONAN
+                    </div>
+
+                    <h1>
+                        Request #REQ-<?= esc($permohonan['id_permohonan']) ?>
+                    </h1>
+
+                </div>
+
 
                 <?php
-                $statusGlobal = strtoupper(
+                $status = strtoupper(
                     $permohonan['nama_status']
                 );
 
                 $statusClass = strtolower(
-                    $statusGlobal
+                    $status
                 );
                 ?>
 
-                <span class="global-status <?= esc($statusClass) ?>">
 
-                    <?php if ($statusGlobal === 'DIAJUKAN') : ?>
+                <span
+                    class="global-status <?= esc($statusClass) ?>"
+                >
 
-                        <i class="fa-solid fa-circle-info"></i>
+                    <span class="status-dot"></span>
 
-                    <?php elseif ($statusGlobal === 'DIPROSES') : ?>
-
-                        <i class="fa-regular fa-clock"></i>
-
-                    <?php elseif ($statusGlobal === 'SELESAI') : ?>
-
-                        <i class="fa-regular fa-circle-check"></i>
-
-                    <?php elseif ($statusGlobal === 'DITOLAK') : ?>
-
-                        <i class="fa-regular fa-circle-xmark"></i>
-
-                    <?php elseif ($statusGlobal === 'DIAMBIL') : ?>
-
-                        <i class="fa-solid fa-box-archive"></i>
-
-                    <?php endif; ?>
-
-                    <?= esc($statusGlobal) ?>
+                    <?= esc($status) ?>
 
                 </span>
 
@@ -78,119 +74,164 @@ Detail Permohonan - JTI Signature
         </div>
 
 
-        <div class="submitted-info">
+        <div class="submitted">
 
-            Submitted:
+            <span>
+                Tanggal Pengajuan
+            </span>
 
-            <?= ! empty($permohonan['tanggal_pengajuan'])
-                ? esc(
-                    date(
-                        'd M Y - H:i',
-                        strtotime(
-                            $permohonan['tanggal_pengajuan']
+            <strong>
+
+                <?= ! empty(
+                    $permohonan['tanggal_pengajuan']
+                )
+                    ? esc(
+                        date(
+                            'd M Y, H:i',
+                            strtotime(
+                                $permohonan[
+                                    'tanggal_pengajuan'
+                                ]
+                            )
                         )
                     )
-                )
-                : '-'
-            ?>
+                    : '-'
+                ?>
+
+                WIB
+
+            </strong>
 
         </div>
 
     </div>
 
 
-    <!-- =========================================
+
+    <!-- =====================================================
          MAIN GRID
-    ========================================== -->
+    ====================================================== -->
 
-    <div class="detail-grid">
-
-
-        <!-- =====================================
-             LEFT COLUMN
-        ====================================== -->
-
-        <div class="detail-main">
+    <div class="detail-layout">
 
 
-            <!-- INFORMASI MAHASISWA -->
+        <!-- =================================================
+             LEFT
+        ================================================== -->
 
-            <section class="detail-card">
-
-                <div class="card-title">
-
-                    <h2>
-                        Informasi Mahasiswa
-                    </h2>
-
-                </div>
+        <main class="detail-main">
 
 
-                <div class="student-detail">
+            <!-- =============================================
+                 MAHASISWA
+            ============================================== -->
 
-                    <div class="student-avatar-large">
+            <section class="detail-card student-card">
+
+                <div class="section-title">
+
+                    <div class="title-icon blue">
 
                         <i class="fa-solid fa-user"></i>
 
                     </div>
 
+                    <div>
 
-                    <div class="student-details-grid">
+                        <h2>
+                            Informasi Mahasiswa
+                        </h2>
 
-                        <div class="info-item">
+                        <p>
+                            Data pemohon yang mengajukan permintaan.
+                        </p>
 
-                            <span class="info-label">
-                                Nama Lengkap
-                            </span>
+                    </div>
 
-                            <strong>
-                                <?= esc(
-                                    $permohonan['nama_lengkap']
-                                ) ?>
-                            </strong>
-
-                        </div>
+                </div>
 
 
-                        <div class="info-item">
+                <div class="student-profile">
 
-                            <span class="info-label">
+                    <div class="profile-avatar">
+
+                        <?= strtoupper(
+                            substr(
+                                $permohonan[
+                                    'nama_lengkap'
+                                ],
+                                0,
+                                1
+                            )
+                        ) ?>
+
+                    </div>
+
+
+                    <div class="student-name">
+
+                        <span>
+                            Nama Lengkap
+                        </span>
+
+                        <strong>
+                            <?= esc(
+                                $permohonan[
+                                    'nama_lengkap'
+                                ]
+                            ) ?>
+                        </strong>
+
+                    </div>
+
+
+                    <div class="student-meta">
+
+                        <div>
+
+                            <span>
                                 NIM
                             </span>
 
                             <strong>
                                 <?= esc(
-                                    $permohonan['nim']
+                                    $permohonan[
+                                        'nim'
+                                    ]
                                 ) ?>
                             </strong>
 
                         </div>
 
 
-                        <div class="info-item">
+                        <div>
 
-                            <span class="info-label">
+                            <span>
                                 Email
                             </span>
 
                             <strong>
                                 <?= esc(
-                                    $permohonan['email']
+                                    $permohonan[
+                                        'email'
+                                    ]
                                 ) ?>
                             </strong>
 
                         </div>
 
 
-                        <div class="info-item">
+                        <div>
 
-                            <span class="info-label">
+                            <span>
                                 No. Handphone
                             </span>
 
                             <strong>
                                 <?= esc(
-                                    $permohonan['no_hp']
+                                    $permohonan[
+                                        'no_hp'
+                                    ]
                                 ) ?>
                             </strong>
 
@@ -203,44 +244,71 @@ Detail Permohonan - JTI Signature
             </section>
 
 
-            <!-- TUJUAN PERMOHONAN -->
+
+            <!-- =============================================
+                 PERMOHONAN
+            ============================================== -->
 
             <section class="detail-card">
 
-                <div class="card-title">
+                <div class="section-title">
 
-                    <h2>
-                        Tujuan Permohonan
-                    </h2>
+                    <div class="title-icon navy">
 
-                </div>
+                        <i class="fa-regular fa-file-lines"></i>
 
+                    </div>
 
-                <div class="field-block">
+                    <div>
 
-                    <span class="field-label">
-                        Tujuan Permohonan
-                    </span>
+                        <h2>
+                            Tujuan Permohonan
+                        </h2>
 
-                    <div class="field-value">
-                        <?= esc(
-                            $permohonan['nama_tujuan']
-                        ) ?>
+                        <p>
+                            Informasi mengenai permintaan tanda tangan.
+                        </p>
+
                     </div>
 
                 </div>
 
 
-                <div class="field-block">
+                <!-- TUJUAN -->
 
-                    <span class="field-label">
+                <div class="request-field">
+
+                    <span>
+                        Tujuan Permohonan
+                    </span>
+
+                    <div class="request-value highlight">
+
+                        <?= esc(
+                            $permohonan[
+                                'nama_tujuan'
+                            ]
+                        ) ?>
+
+                    </div>
+
+                </div>
+
+
+                <!-- KEPERLUAN -->
+
+                <div class="request-field">
+
+                    <span>
                         Keperluan
                     </span>
 
-                    <div class="field-value">
+                    <div class="request-value">
 
                         <?= esc(
-                            $permohonan['keperluan']
+                            $permohonan[
+                                'keperluan'
+                            ]
                         ) ?>
 
                     </div>
@@ -248,25 +316,39 @@ Detail Permohonan - JTI Signature
                 </div>
 
 
-                <div class="field-block">
+                <!-- DESKRIPSI -->
 
-                    <span class="field-label">
+                <div class="request-field">
+
+                    <span>
                         Deskripsi Tambahan
                     </span>
 
-                    <div class="field-value description">
+                    <div class="request-value description">
 
-                        <?=
+                        <?php if (
                             ! empty(
-                                $permohonan['deskripsi']
+                                $permohonan[
+                                    'deskripsi'
+                                ]
                             )
-                            ? nl2br(
+                        ) : ?>
+
+                            <?= nl2br(
                                 esc(
-                                    $permohonan['deskripsi']
+                                    $permohonan[
+                                        'deskripsi'
+                                    ]
                                 )
-                            )
-                            : 'Tidak ada deskripsi tambahan.'
-                        ?>
+                            ) ?>
+
+                        <?php else : ?>
+
+                            <span class="empty-text">
+                                Tidak ada deskripsi tambahan.
+                            </span>
+
+                        <?php endif; ?>
 
                     </div>
 
@@ -275,32 +357,58 @@ Detail Permohonan - JTI Signature
             </section>
 
 
-            <!-- BERKAS -->
+
+            <!-- =============================================
+                 BERKAS
+            ============================================== -->
 
             <section class="detail-card">
 
-                <div class="card-title card-title-between">
+                <div class="section-title section-title-between">
 
-                    <h2>
-                        Berkas Dokumen
-                    </h2>
+                    <div class="title-group">
 
-                    <span class="attachment-count">
+                        <div class="title-icon purple">
+
+                            <i class="fa-solid fa-paperclip"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h2>
+                                Berkas Dokumen
+                            </h2>
+
+                            <p>
+                                Pemeriksaan dilakukan pada setiap berkas.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <span class="document-count">
 
                         <?= count($berkas) ?>
 
-                        Berkas Terlampir
+                        <?= count($berkas) === 1
+                            ? 'Berkas'
+                            : 'Berkas'
+                        ?>
 
                     </span>
 
                 </div>
 
 
-                <div class="document-list">
 
-                    <?php if (! empty($berkas)) : ?>
+                <?php if (! empty($berkas)) : ?>
 
-                        <?php foreach ($berkas as $b) : ?>
+                    <div class="document-list">
+
+                        <?php foreach ($berkas as $index => $b) : ?>
 
                             <?php
                             $isDone =
@@ -308,7 +416,24 @@ Detail Permohonan - JTI Signature
                             ?>
 
 
-                            <div class="document-item">
+                            <article class="document-card">
+
+
+                                <!-- NUMBER -->
+
+                                <div class="document-number">
+
+                                    <?= str_pad(
+                                        $index + 1,
+                                        2,
+                                        '0',
+                                        STR_PAD_LEFT
+                                    ) ?>
+
+                                </div>
+
+
+                                <!-- ICON -->
 
                                 <div class="document-icon">
 
@@ -317,19 +442,25 @@ Detail Permohonan - JTI Signature
                                 </div>
 
 
+                                <!-- INFORMATION -->
+
                                 <div class="document-info">
 
                                     <strong>
+
                                         <?= esc(
-                                            $b['nama_berkas']
+                                            $b[
+                                                'nama_berkas'
+                                            ]
                                         ) ?>
+
                                     </strong>
 
                                     <span>
 
                                         <?= $isDone
-                                            ? 'Berkas sudah selesai diproses.'
-                                            : 'Berkas sedang diproses.'
+                                            ? 'Berkas sudah selesai diproses'
+                                            : 'Menunggu pemeriksaan admin'
                                         ?>
 
                                     </span>
@@ -337,11 +468,13 @@ Detail Permohonan - JTI Signature
                                 </div>
 
 
+                                <!-- STATUS -->
+
                                 <div class="document-status">
 
                                     <?php if ($isDone) : ?>
 
-                                        <span class="document-badge selesai">
+                                        <span class="document-badge completed">
 
                                             <i class="fa-regular fa-circle-check"></i>
 
@@ -351,7 +484,7 @@ Detail Permohonan - JTI Signature
 
                                     <?php else : ?>
 
-                                        <span class="document-badge diproses">
+                                        <span class="document-badge processing">
 
                                             <i class="fa-regular fa-clock"></i>
 
@@ -364,18 +497,23 @@ Detail Permohonan - JTI Signature
                                 </div>
 
 
+                                <!-- ACTION -->
+
                                 <div class="document-action">
 
                                     <form
                                         method="post"
                                         action="<?= site_url(
                                             'admin/berkas/' .
-                                            $b['id_berkas'] .
+                                            $b[
+                                                'id_berkas'
+                                            ] .
                                             '/status'
                                         ) ?>"
                                     >
 
                                         <?= csrf_field() ?>
+
 
                                         <input
                                             type="hidden"
@@ -383,19 +521,24 @@ Detail Permohonan - JTI Signature
                                             value="<?= $isDone ? 0 : 1 ?>"
                                         >
 
+
                                         <button
                                             type="submit"
                                             class="<?= $isDone
-                                                ? 'secondary-button'
-                                                : 'success-button'
+                                                ? 'document-button secondary'
+                                                : 'document-button success'
                                             ?>"
                                         >
 
                                             <?php if ($isDone) : ?>
 
-                                                Tandai Diproses
+                                                <i class="fa-solid fa-rotate-left"></i>
+
+                                                Buka Kembali
 
                                             <?php else : ?>
+
+                                                <i class="fa-solid fa-check"></i>
 
                                                 Set Selesai
 
@@ -407,54 +550,115 @@ Detail Permohonan - JTI Signature
 
                                 </div>
 
-                            </div>
+
+                            </article>
 
                         <?php endforeach; ?>
 
-                    <?php else : ?>
+                    </div>
 
-                        <div class="empty-documents">
+                <?php else : ?>
+
+
+                    <div class="no-documents">
+
+                        <div class="no-documents-icon">
 
                             <i class="fa-regular fa-folder-open"></i>
 
-                            <p>
-                                Belum ada berkas yang dilampirkan.
-                            </p>
-
                         </div>
 
-                    <?php endif; ?>
+                        <strong>
+                            Belum ada berkas
+                        </strong>
+
+                        <span>
+                            Tidak ada dokumen yang dilampirkan pada permohonan ini.
+                        </span>
+
+                    </div>
+
+                <?php endif; ?>
+
+            </section>
+
+        </main>
+
+
+
+        <!-- =================================================
+             RIGHT SIDEBAR
+        ================================================== -->
+
+        <aside class="detail-side">
+
+
+            <!-- =============================================
+                 STATUS SUMMARY
+            ============================================== -->
+
+            <section class="side-card status-card">
+
+                <div class="side-card-header">
+
+                    <span>
+                        STATUS PERMOHONAN
+                    </span>
+
+                    <i class="fa-solid fa-chart-simple"></i>
+
+                </div>
+
+
+                <div
+                    class="status-large <?= esc(
+                        $statusClass
+                    ) ?>"
+                >
+
+                    <span class="status-dot"></span>
+
+                    <div>
+
+                        <strong>
+                            <?= esc($status) ?>
+                        </strong>
+
+                        <span>
+                            Status saat ini
+                        </span>
+
+                    </div>
 
                 </div>
 
             </section>
 
-        </div>
 
 
-        <!-- =====================================
-             RIGHT COLUMN
-        ====================================== -->
+            <!-- =============================================
+                 FOTO BUKTI
+            ============================================== -->
 
-        <aside class="detail-sidebar">
+            <section class="side-card">
 
+                <div class="side-heading">
 
-            <!-- FOTO BUKTI -->
+                    <div>
 
-            <section class="detail-card evidence-card">
+                        <h2>
+                            Foto Bukti Pengumpulan
+                        </h2>
 
-                <div class="card-title">
+                        <p>
+                            Bukti penyerahan berkas fisik ke admin jurusan.
+                        </p>
 
-                    <h2>
-                        Foto Bukti Pengumpulan
-                    </h2>
+                    </div>
+
+                    <i class="fa-regular fa-image"></i>
 
                 </div>
-
-                <p class="card-description">
-                    Foto bukti pengumpulan berkas fisik
-                    ke admin jurusan.
-                </p>
 
 
                 <?php
@@ -463,12 +667,17 @@ Detail Permohonan - JTI Signature
 
                 foreach ($berkas as $b) {
 
-                    if (! empty($b['bukti_foto'])) {
+                    if (
+                        ! empty(
+                            $b['bukti_foto']
+                        )
+                    ) {
 
                         $fotoBukti =
                             $b['bukti_foto'];
 
                         break;
+
                     }
                 }
 
@@ -482,40 +691,48 @@ Detail Permohonan - JTI Signature
                             $fotoBukti
                         ) ?>"
                         target="_blank"
-                        class="evidence-image-link"
+                        class="evidence-wrapper"
                     >
 
                         <img
                             src="<?= base_url(
                                 $fotoBukti
                             ) ?>"
-                            alt="Bukti Pengumpulan"
+                            alt="Foto Bukti Pengumpulan"
                             class="evidence-image"
                         >
 
-                    </a>
+                        <div class="image-overlay">
 
+                            <span>
 
-                    <a
-                        href="<?= base_url(
-                            $fotoBukti
-                        ) ?>"
-                        target="_blank"
-                        class="view-image-link"
-                    >
+                                <i class="fa-solid fa-expand"></i>
 
-                        Klik untuk melihat gambar penuh
+                                Lihat gambar
+
+                            </span>
+
+                        </div>
 
                     </a>
 
                 <?php else : ?>
 
-                    <div class="no-evidence">
+                    <div class="evidence-empty">
 
-                        <i class="fa-regular fa-image"></i>
+                        <div>
+
+                            <i class="fa-regular fa-image"></i>
+
+                        </div>
+
+                        <strong>
+                            Foto belum tersedia
+                        </strong>
 
                         <span>
-                            Foto bukti belum tersedia.
+                            Mahasiswa belum mengunggah
+                            foto bukti pengumpulan.
                         </span>
 
                     </div>
@@ -525,27 +742,39 @@ Detail Permohonan - JTI Signature
             </section>
 
 
-            <!-- KEPUTUSAN AKHIR -->
 
-            <section class="detail-card decision-card">
+            <!-- =============================================
+                 DECISION
+            ============================================== -->
 
-                <div class="card-title">
+            <section class="side-card decision-card">
 
-                    <h2>
-                        <i class="fa-solid fa-gavel"></i>
-                        Keputusan Akhir
-                    </h2>
+                <div class="side-heading">
+
+                    <div>
+
+                        <h2>
+                            Keputusan Admin
+                        </h2>
+
+                        <p>
+                            Perbarui status permohonan.
+                        </p>
+
+                    </div>
+
+                    <i class="fa-solid fa-gavel"></i>
 
                 </div>
 
-
-                <!-- FORM UPDATE GLOBAL -->
 
                 <form
                     method="post"
                     action="<?= site_url(
                         'admin/permohonan/' .
-                        $permohonan['id_permohonan'] .
+                        $permohonan[
+                            'id_permohonan'
+                        ] .
                         '/status'
                     ) ?>"
                 >
@@ -553,92 +782,92 @@ Detail Permohonan - JTI Signature
                     <?= csrf_field() ?>
 
 
-                    <div class="field-block">
+                    <!-- STATUS -->
 
-                        <label
-                            for="status"
-                            class="field-label"
-                        >
+                    <div class="control-group">
+
+                        <label for="status">
                             Status Permohonan
                         </label>
 
-                        <select
-                            name="status"
-                            id="status"
-                            class="decision-select"
-                        >
+                        <div class="control-select">
 
-                            <option
-                                value="DIAJUKAN"
-                                <?= $statusGlobal === 'DIAJUKAN'
-                                    ? 'selected'
-                                    : ''
-                                ?>
+                            <select
+                                name="status"
+                                id="status"
                             >
-                                Diajukan
-                            </option>
 
-                            <option
-                                value="DIPROSES"
-                                <?= $statusGlobal === 'DIPROSES'
-                                    ? 'selected'
-                                    : ''
-                                ?>
-                            >
-                                Diproses
-                            </option>
+                                <option
+                                    value="DIAJUKAN"
+                                    <?= $status === 'DIAJUKAN'
+                                        ? 'selected'
+                                        : ''
+                                    ?>
+                                >
+                                    Diajukan
+                                </option>
 
-                            <option
-                                value="SELESAI"
-                                <?= $statusGlobal === 'SELESAI'
-                                    ? 'selected'
-                                    : ''
-                                ?>
-                            >
-                                Selesai
-                            </option>
+                                <option
+                                    value="DIPROSES"
+                                    <?= $status === 'DIPROSES'
+                                        ? 'selected'
+                                        : ''
+                                    ?>
+                                >
+                                    Diproses
+                                </option>
 
-                            <option
-                                value="DIAMBIL"
-                                <?= $statusGlobal === 'DIAMBIL'
-                                    ? 'selected'
-                                    : ''
-                                ?>
-                            >
-                                Diambil
-                            </option>
+                                <option
+                                    value="DITOLAK"
+                                    <?= $status === 'DITOLAK'
+                                        ? 'selected'
+                                        : ''
+                                    ?>
+                                >
+                                    Ditolak
+                                </option>
 
-                            <option
-                                value="DITOLAK"
-                                <?= $statusGlobal === 'DITOLAK'
-                                    ? 'selected'
-                                    : ''
-                                ?>
-                            >
-                                Ditolak
-                            </option>
+                                <option
+                                    value="SELESAI"
+                                    <?= $status === 'SELESAI'
+                                        ? 'selected'
+                                        : ''
+                                    ?>
+                                >
+                                    Selesai
+                                </option>
 
-                        </select>
+                                <option
+                                    value="DIAMBIL"
+                                    <?= $status === 'DIAMBIL'
+                                        ? 'selected'
+                                        : ''
+                                    ?>
+                                >
+                                    Diambil
+                                </option>
+
+                            </select>
+
+                            <i class="fa-solid fa-chevron-down"></i>
+
+                        </div>
 
                     </div>
 
 
-                    <!-- ALASAN PENOLAKAN -->
+                    <!-- REASON -->
 
-                    <div class="field-block">
+                    <div class="control-group">
 
-                        <label
-                            for="keterangan_penolakan"
-                            class="field-label"
-                        >
+                        <label for="keterangan_penolakan">
                             Alasan Penolakan
                         </label>
 
                         <textarea
                             name="keterangan_penolakan"
                             id="keterangan_penolakan"
-                            class="decision-textarea"
-                            placeholder="Masukkan alasan jika dokumen ditolak..."
+                            placeholder="Masukkan alasan jika permohonan ditolak..."
                         ><?= esc(
                             $permohonan[
                                 'keterangan_penolakan'
@@ -650,25 +879,27 @@ Detail Permohonan - JTI Signature
 
                     <button
                         type="submit"
-                        class="primary-button"
+                        class="update-button"
                     >
 
-                        <i class="fa-solid fa-rotate"></i>
+                        <i class="fa-solid fa-floppy-disk"></i>
 
-                        Update Status Global
+                        Simpan Perubahan
 
                     </button>
 
                 </form>
 
 
-                <!-- TOLAK CEPAT -->
+                <!-- REJECT -->
 
                 <form
                     method="post"
                     action="<?= site_url(
                         'admin/permohonan/' .
-                        $permohonan['id_permohonan'] .
+                        $permohonan[
+                            'id_permohonan'
+                        ] .
                         '/status'
                     ) ?>"
                     class="reject-form"
@@ -676,11 +907,13 @@ Detail Permohonan - JTI Signature
 
                     <?= csrf_field() ?>
 
+
                     <input
                         type="hidden"
                         name="status"
                         value="DITOLAK"
                     >
+
 
                     <input
                         type="hidden"
@@ -691,6 +924,7 @@ Detail Permohonan - JTI Signature
                             ] ?? ''
                         ) ?>"
                     >
+
 
                     <button
                         type="submit"

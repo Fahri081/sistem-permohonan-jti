@@ -1,58 +1,48 @@
 <?= $this->extend('admin/layout') ?>
 
-
 <?= $this->section('title') ?>
 Semua Permohonan - JTI Signature
 <?= $this->endSection() ?>
 
-
 <?= $this->section('content') ?>
 
-<!-- CSS khusus halaman Semua Permohonan -->
 <link
     rel="stylesheet"
     href="<?= base_url('assets/css/admin/permohonan.css') ?>"
 >
 
+<div class="requests-page">
 
-<div class="admin-page">
+    <!-- ==================================================
+         PAGE HEADING
+    =================================================== -->
 
-    <!-- =====================================
-         PAGE HEADER
-    ====================================== -->
+    <div class="requests-top">
 
-    <div class="page-header">
-
-        <div>
+        <div class="requests-title">
 
             <h1>
                 Semua Permohonan
             </h1>
 
             <p>
-                Kelola semua pengajuan tanda tangan mahasiswa.
+                Kelola semua pengajuan tanda tangan mahasiswa
             </p>
 
         </div>
 
-    </div>
 
-
-    <!-- =====================================
-         FILTER
-    ====================================== -->
-
-    <div class="filter-card">
+        <!-- ==================================================
+             SEARCH / FILTER
+        =================================================== -->
 
         <form
             method="get"
             action="<?= site_url('admin/permohonan') ?>"
-            class="filter-form"
+            class="requests-controls"
         >
 
-            <!-- SEARCH -->
-
-            <div class="search-box">
+            <div class="search-input">
 
                 <i class="fa-solid fa-magnifying-glass"></i>
 
@@ -61,97 +51,119 @@ Semua Permohonan - JTI Signature
                     name="keyword"
                     value="<?= esc($keyword ?? '') ?>"
                     placeholder="Cari permohonan..."
+                    autocomplete="off"
                 >
 
             </div>
 
 
-            <!-- STATUS -->
+            <div class="filter-input">
 
-            <select
-                name="status"
-                class="status-filter"
-            >
+                <i class="fa-solid fa-sliders"></i>
 
-                <option value="">
-                    Semua Status
-                </option>
+                <select name="status">
 
-                <option
-                    value="1"
-                    <?= ($statusFilter ?? '') === '1' ? 'selected' : '' ?>
-                >
-                    Diajukan
-                </option>
+                    <option value="">
+                        Semua Status
+                    </option>
 
-                <option
-                    value="2"
-                    <?= ($statusFilter ?? '') === '2' ? 'selected' : '' ?>
-                >
-                    Ditolak
-                </option>
+                    <option
+                        value="1"
+                        <?= ($statusFilter ?? '') === '1'
+                            ? 'selected'
+                            : ''
+                        ?>
+                    >
+                        Diajukan
+                    </option>
 
-                <option
-                    value="3"
-                    <?= ($statusFilter ?? '') === '3' ? 'selected' : '' ?>
-                >
-                    Diproses
-                </option>
+                    <option
+                        value="2"
+                        <?= ($statusFilter ?? '') === '2'
+                            ? 'selected'
+                            : ''
+                        ?>
+                    >
+                        Diproses
+                    </option>
 
-                <option
-                    value="4"
-                    <?= ($statusFilter ?? '') === '4' ? 'selected' : '' ?>
-                >
-                    Selesai
-                </option>
+                    <option
+                        value="3"
+                        <?= ($statusFilter ?? '') === '3'
+                            ? 'selected'
+                            : ''
+                        ?>
+                    >
+                        Ditolak
+                    </option>
 
-                <option
-                    value="5"
-                    <?= ($statusFilter ?? '') === '5' ? 'selected' : '' ?>
-                >
-                    Diambil
-                </option>
+                    <option
+                        value="4"
+                        <?= ($statusFilter ?? '') === '4'
+                            ? 'selected'
+                            : ''
+                        ?>
+                    >
+                        Selesai
+                    </option>
 
-            </select>
+                    <option
+                        value="5"
+                        <?= ($statusFilter ?? '') === '5'
+                            ? 'selected'
+                            : ''
+                        ?>
+                    >
+                        Diambil
+                    </option>
 
+                </select>
 
-            <!-- FILTER BUTTON -->
+                <i class="fa-solid fa-chevron-down"></i>
+
+            </div>
+
 
             <button
                 type="submit"
-                class="filter-button"
+                class="btn-search"
             >
 
-                <i class="fa-solid fa-filter"></i>
+                <i class="fa-solid fa-magnifying-glass"></i>
 
-                Filter
+                Cari
 
             </button>
 
 
-            <!-- RESET -->
+            <?php if (
+                ! empty($keyword) ||
+                ! empty($statusFilter)
+            ) : ?>
 
-            <a
-                href="<?= site_url('admin/permohonan') ?>"
-                class="reset-button"
-            >
-                Reset
-            </a>
+                <a
+                    href="<?= site_url('admin/permohonan') ?>"
+                    class="btn-reset"
+                >
+                    Reset
+                </a>
+
+            <?php endif; ?>
 
         </form>
 
     </div>
 
 
-    <!-- =====================================
-         TABLE CARD
-    ====================================== -->
+    <!-- ==================================================
+         MAIN CARD
+    =================================================== -->
 
-    <div class="table-card">
+    <div class="requests-card">
 
-        <!-- HEADER TABLE -->
+        <!-- CARD HEADER -->
 
-        <div class="table-header">
+        <div class="card-toolbar">
 
             <div>
 
@@ -159,13 +171,26 @@ Semua Permohonan - JTI Signature
                     Daftar Permohonan
                 </h2>
 
-                <p>
+                <span>
                     Menampilkan
                     <strong>
                         <?= count($permohonan) ?>
                     </strong>
                     permohonan
-                </p>
+                </span>
+
+            </div>
+
+
+            <div class="total-counter">
+
+                <span>
+                    TOTAL
+                </span>
+
+                <strong>
+                    <?= count($permohonan) ?>
+                </strong>
 
             </div>
 
@@ -174,39 +199,31 @@ Semua Permohonan - JTI Signature
 
         <?php if (! empty($permohonan)) : ?>
 
-            <!-- TABLE -->
+            <!-- ==================================================
+                 TABLE
+            =================================================== -->
 
-            <div class="table-wrapper">
+            <div class="requests-table-wrapper">
 
-                <table class="admin-table">
+                <table class="requests-table">
 
                     <thead>
 
                         <tr>
 
-                            <th>
-                                ID Permohonan
-                            </th>
+                            <th>ID PERMOHONAN</th>
 
-                            <th>
-                                Mahasiswa
-                            </th>
+                            <th>MAHASISWA</th>
 
-                            <th>
-                                Tujuan
-                            </th>
+                            <th>TUJUAN</th>
 
-                            <th>
-                                Tanggal
-                            </th>
+                            <th>BERKAS</th>
 
-                            <th>
-                                Status
-                            </th>
+                            <th>TANGGAL</th>
 
-                            <th>
-                                Aksi
-                            </th>
+                            <th>STATUS</th>
+
+                            <th>AKSI</th>
 
                         </tr>
 
@@ -219,13 +236,15 @@ Semua Permohonan - JTI Signature
 
                         <?php
 
-                        $status = strtoupper(
-                            $p['nama_status']
-                        );
+                        $status =
+                            strtoupper(
+                                $p['nama_status']
+                            );
 
-                        $statusClass = strtolower(
-                            $status
-                        );
+                        $statusClass =
+                            strtolower(
+                                $status
+                            );
 
                         $tanggal =
                             $p['tanggal_pengajuan']
@@ -234,8 +253,8 @@ Semua Permohonan - JTI Signature
 
                         ?>
 
-
                         <tr>
+
 
                             <!-- ID -->
 
@@ -243,8 +262,11 @@ Semua Permohonan - JTI Signature
 
                                 <span class="request-id">
 
-                                    #<?= esc(
-                                        $p['id_permohonan']
+                                    #REQ-<?= str_pad(
+                                        $p['id_permohonan'],
+                                        3,
+                                        '0',
+                                        STR_PAD_LEFT
                                     ) ?>
 
                                 </span>
@@ -260,12 +282,18 @@ Semua Permohonan - JTI Signature
 
                                     <div class="student-avatar">
 
-                                        <i class="fa-solid fa-user"></i>
+                                        <?= strtoupper(
+                                            substr(
+                                                $p['nama_lengkap'],
+                                                0,
+                                                1
+                                            )
+                                        ) ?>
 
                                     </div>
 
 
-                                    <div class="student-data">
+                                    <div class="student-text">
 
                                         <strong>
 
@@ -296,9 +324,32 @@ Semua Permohonan - JTI Signature
 
                                 <div class="purpose-cell">
 
-                                    <?= esc(
-                                        $p['nama_tujuan']
-                                    ) ?>
+                                    <strong>
+
+                                        <?= esc(
+                                            $p['nama_tujuan']
+                                        ) ?>
+
+                                    </strong>
+
+                                    <span>
+                                        Permohonan tanda tangan
+                                    </span>
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- BERKAS -->
+
+                            <td>
+
+                                <div class="file-cell">
+
+                                    <i class="fa-solid fa-paperclip"></i>
+
+                                    <span>-</span>
 
                                 </div>
 
@@ -311,16 +362,43 @@ Semua Permohonan - JTI Signature
 
                                 <?php if ($tanggal) : ?>
 
-                                    <?= esc(
-                                        date(
-                                            'd M Y',
-                                            strtotime($tanggal)
-                                        )
-                                    ) ?>
+                                    <div class="date-cell">
+
+                                        <strong>
+
+                                            <?= esc(
+                                                date(
+                                                    'd M Y',
+                                                    strtotime(
+                                                        $tanggal
+                                                    )
+                                                )
+                                            ) ?>
+
+                                        </strong>
+
+                                        <span>
+
+                                            <?= esc(
+                                                date(
+                                                    'H:i',
+                                                    strtotime(
+                                                        $tanggal
+                                                    )
+                                                )
+                                            ) ?>
+
+                                            WIB
+
+                                        </span>
+
+                                    </div>
 
                                 <?php else : ?>
 
-                                    -
+                                    <span class="muted">
+                                        -
+                                    </span>
 
                                 <?php endif; ?>
 
@@ -332,17 +410,26 @@ Semua Permohonan - JTI Signature
                             <td>
 
                                 <span
-                                    class="status-badge <?= esc(
-                                        $statusClass
-                                    ) ?>"
+                                    class="
+                                        status-badge
+                                        <?= esc(
+                                            $statusClass
+                                        ) ?>
+                                    "
                                 >
-                                    <?= esc($status) ?>
+
+                                    <span></span>
+
+                                    <?= esc(
+                                        $status
+                                    ) ?>
+
                                 </span>
 
                             </td>
 
 
-                            <!-- AKSI -->
+                            <!-- ACTION -->
 
                             <td>
 
@@ -354,16 +441,15 @@ Semua Permohonan - JTI Signature
                                     class="detail-button"
                                 >
 
-                                    <i class="fa-regular fa-eye"></i>
-
                                     Detail
+
+                                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
 
                                 </a>
 
                             </td>
 
                         </tr>
-
 
                     <?php endforeach; ?>
 
@@ -374,12 +460,51 @@ Semua Permohonan - JTI Signature
             </div>
 
 
+            <!-- ==================================================
+                 FOOTER
+            =================================================== -->
+
+            <div class="requests-footer">
+
+                <span>
+
+                    Menampilkan
+                    <strong>
+                        <?= count($permohonan) ?>
+                    </strong>
+                    dari
+                    <strong>
+                        <?= count($permohonan) ?>
+                    </strong>
+                    permohonan
+
+                </span>
+
+
+                <div class="pagination">
+
+                    <button disabled>
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+
+                    <button class="current">
+                        1
+                    </button>
+
+                    <button disabled>
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+
+                </div>
+
+            </div>
+
+
         <?php else : ?>
 
-
-            <!-- =================================
+            <!-- ==================================================
                  EMPTY STATE
-            ================================== -->
+            =================================================== -->
 
             <div class="empty-state">
 
@@ -389,24 +514,49 @@ Semua Permohonan - JTI Signature
 
                 </div>
 
-
                 <h3>
                     Belum ada permohonan
                 </h3>
 
-
                 <p>
-                    Belum ada data permohonan yang tersedia.
+
+                    <?php if (
+                        ! empty($keyword) ||
+                        ! empty($statusFilter)
+                    ) : ?>
+
+                        Tidak ada permohonan yang sesuai
+                        dengan pencarian atau filter.
+
+                    <?php else : ?>
+
+                        Belum ada data permohonan yang
+                        tersedia di sistem.
+
+                    <?php endif; ?>
+
                 </p>
 
-            </div>
 
+                <?php if (
+                    ! empty($keyword) ||
+                    ! empty($statusFilter)
+                ) : ?>
+
+                    <a
+                        href="<?= site_url('admin/permohonan') ?>"
+                    >
+                        Tampilkan Semua
+                    </a>
+
+                <?php endif; ?>
+
+            </div>
 
         <?php endif; ?>
 
     </div>
 
 </div>
-
 
 <?= $this->endSection() ?>

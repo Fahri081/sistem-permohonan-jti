@@ -9,18 +9,16 @@ use CodeIgniter\Controller;
 class Admin extends Controller
 {
     /**
-     * ==========================================
+     * =====================================================
      * DASHBOARD ADMIN
-     * ==========================================
+     * =====================================================
      */
     public function index()
     {
         $permohonan = new PermohonanModel();
 
         /*
-         * ------------------------------------------
-         * DATA PERMOHONAN TERBARU
-         * ------------------------------------------
+         * Data permohonan terbaru
          */
         $data['permohonan'] = $permohonan
             ->select(
@@ -48,17 +46,14 @@ class Admin extends Controller
             )
             ->findAll();
 
-
         /*
-         * ------------------------------------------
-         * STATISTIK DASHBOARD
+         * Statistik
          *
-         * 1 = DIAJUKAN
-         * 2 = DIPROSES
-         * 3 = DITOLAK
-         * 4 = SELESAI
-         * 5 = DIAMBIL
-         * ------------------------------------------
+         * 1 = Diajukan
+         * 2 = Diproses
+         * 3 = Ditolak
+         * 4 = Selesai
+         * 5 = Diambil
          */
         $data['statistik'] = [
             'total' => (new PermohonanModel())
@@ -85,18 +80,14 @@ class Admin extends Controller
                 ->countAllResults(),
         ];
 
-
         /*
-         * ------------------------------------------
-         * 5 AKTIVITAS TERBARU
-         * ------------------------------------------
+         * Lima aktivitas terbaru
          */
         $data['aktivitas'] = array_slice(
             $data['permohonan'],
             0,
             5
         );
-
 
         return view(
             'admin/dashboard',
@@ -106,29 +97,28 @@ class Admin extends Controller
 
 
     /**
-     * ==========================================
+     * =====================================================
      * SEMUA PERMOHONAN
-     * ==========================================
+     * =====================================================
      */
     public function all()
     {
         $permohonan = new PermohonanModel();
 
         /*
-         * Ambil keyword pencarian
+         * Keyword pencarian
          */
         $keyword = trim(
             (string) $this->request->getGet('keyword')
         );
 
         /*
-         * Ambil filter status
+         * Filter status
          */
         $status = $this->request->getGet('status');
 
-
         /*
-         * Query dasar
+         * Query utama
          */
         $builder = $permohonan
             ->select(
@@ -151,11 +141,8 @@ class Admin extends Controller
                 'status.id_status = permohonan.id_status'
             );
 
-
         /*
-         * ------------------------------------------
-         * SEARCH
-         * ------------------------------------------
+         * Search
          */
         if ($keyword !== '') {
 
@@ -180,17 +167,8 @@ class Admin extends Controller
                 ->groupEnd();
         }
 
-
         /*
-         * ------------------------------------------
-         * FILTER STATUS
-         *
-         * 1 = DIAJUKAN
-         * 2 = DIPROSES
-         * 3 = DITOLAK
-         * 4 = SELESAI
-         * 5 = DIAMBIL
-         * ------------------------------------------
+         * Filter status
          */
         if (
             $status !== null &&
@@ -201,18 +179,14 @@ class Admin extends Controller
                 true
             )
         ) {
-
             $builder->where(
                 'permohonan.id_status',
                 (int) $status
             );
         }
 
-
         /*
-         * ------------------------------------------
-         * DATA HASIL
-         * ------------------------------------------
+         * Ambil data
          */
         $data['permohonan'] = $builder
             ->orderBy(
@@ -221,14 +195,11 @@ class Admin extends Controller
             )
             ->findAll();
 
-
         /*
-         * Kirim kembali filter ke View
+         * Kirim filter ke view
          */
         $data['keyword'] = $keyword;
-
         $data['statusFilter'] = $status;
-
 
         return view(
             'admin/permohonan',
@@ -238,14 +209,17 @@ class Admin extends Controller
 
 
     /**
-     * ==========================================
+     * =====================================================
      * DETAIL PERMOHONAN
-     * ==========================================
+     * =====================================================
      */
     public function show(int $id)
     {
         $permohonan = new PermohonanModel();
 
+        /*
+         * Ambil data permohonan + mahasiswa
+         */
         $row = $permohonan
             ->select(
                 'permohonan.*,
@@ -270,12 +244,10 @@ class Admin extends Controller
             )
             ->find($id);
 
-
         /*
-         * Permohonan tidak ditemukan
+         * Jika tidak ditemukan
          */
         if (! $row) {
-
             return redirect()
                 ->to('/admin/permohonan')
                 ->with(
@@ -284,10 +256,8 @@ class Admin extends Controller
                 );
         }
 
-
         /*
          * Ambil seluruh berkas
-         * milik permohonan
          */
         $berkas = (new BerkasPermohonanModel())
             ->where(
@@ -295,7 +265,6 @@ class Admin extends Controller
                 $id
             )
             ->findAll();
-
 
         return view(
             'admin/show',
@@ -308,29 +277,27 @@ class Admin extends Controller
 
 
     /**
-     * ==========================================
+     * =====================================================
      * UPDATE STATUS PERMOHONAN
-     * ==========================================
+     * =====================================================
      */
     public function updateStatus(int $id)
     {
-        $statusName =
-            strtoupper(
-                trim(
-                    (string) $this->request
-                        ->getPost('status')
-                )
-            );
-
+        $statusName = strtoupper(
+            trim(
+                (string) $this->request
+                    ->getPost('status')
+            )
+        );
 
         /*
          * Mapping sesuai database
          *
-         * 1 = DIAJUKAN
-         * 2 = DIPROSES
-         * 3 = DITOLAK
-         * 4 = SELESAI
-         * 5 = DIAMBIL
+         * 1 = Diajukan
+         * 2 = Diproses
+         * 3 = Ditolak
+         * 4 = Selesai
+         * 5 = Diambil
          */
         $map = [
             'DIAJUKAN' => 1,
@@ -340,16 +307,13 @@ class Admin extends Controller
             'DIAMBIL'  => 5,
         ];
 
-
         $statusId =
             $map[$statusName] ?? null;
 
-
         /*
-         * Validasi status
+         * Validasi
          */
         if (! $statusId) {
-
             return redirect()
                 ->back()
                 ->with(
@@ -358,47 +322,39 @@ class Admin extends Controller
                 );
         }
 
-
         /*
-         * Data yang akan diupdate
+         * Data update
          */
         $data = [
             'id_status' => $statusId,
         ];
 
-
         /*
          * Jika selesai
          */
         if ($statusName === 'SELESAI') {
-
             $data['tanggal_selesai'] =
                 date('Y-m-d H:i:s');
         }
 
-
         /*
-         * Jika sudah diambil
+         * Jika diambil
          */
         if ($statusName === 'DIAMBIL') {
-
             $data['tanggal_diambil'] =
                 date('Y-m-d H:i:s');
         }
-
 
         /*
          * Jika ditolak
          */
         if ($statusName === 'DITOLAK') {
-
             $data['keterangan_penolakan'] =
                 $this->request
                     ->getPost(
                         'keterangan_penolakan'
                     );
         }
-
 
         /*
          * Update database
@@ -408,7 +364,6 @@ class Admin extends Controller
                 $id,
                 $data
             );
-
 
         return redirect()
             ->back()
@@ -420,9 +375,9 @@ class Admin extends Controller
 
 
     /**
-     * ==========================================
+     * =====================================================
      * UPDATE STATUS BERKAS
-     * ==========================================
+     * =====================================================
      */
     public function updateBerkasStatus(int $id)
     {
@@ -430,10 +385,6 @@ class Admin extends Controller
             (int) $this->request
                 ->getPost('selesai') === 1;
 
-
-        /*
-         * Update status berkas
-         */
         (new BerkasPermohonanModel())
             ->update(
                 $id,
@@ -447,7 +398,6 @@ class Admin extends Controller
                 ]
             );
 
-
         return redirect()
             ->back()
             ->with(
@@ -458,9 +408,9 @@ class Admin extends Controller
 
 
     /**
-     * ==========================================
+     * =====================================================
      * TANDAI SUDAH DIAMBIL
-     * ==========================================
+     * =====================================================
      */
     public function markPickedUp(int $id)
     {
@@ -475,12 +425,338 @@ class Admin extends Controller
                 ]
             );
 
-
         return redirect()
             ->back()
             ->with(
                 'success',
                 'Permohonan ditandai sudah diambil.'
             );
+    }
+
+
+    /**
+     * =====================================================
+     * LAPORAN & STATISTIK
+     * =====================================================
+     */
+    public function laporan()
+    {
+        $permohonan = new PermohonanModel();
+
+
+        /*
+         * =================================================
+         * FILTER TANGGAL
+         * =================================================
+         */
+
+        $tanggalMulai =
+            $this->request->getGet('mulai')
+            ?: date('Y-m-01');
+
+        $tanggalAkhir =
+            $this->request->getGet('akhir')
+            ?: date('Y-m-t');
+
+
+        /*
+         * =================================================
+         * TOTAL PERMOHONAN
+         * =================================================
+         */
+
+        $data['total'] =
+            (new PermohonanModel())
+                ->where(
+                    'tanggal_pengajuan >=',
+                    $tanggalMulai . ' 00:00:00'
+                )
+                ->where(
+                    'tanggal_pengajuan <=',
+                    $tanggalAkhir . ' 23:59:59'
+                )
+                ->countAllResults();
+
+
+        /*
+         * =================================================
+         * DISTRIBUSI STATUS
+         * =================================================
+         */
+
+        $data['status'] = [
+
+            'diajukan' =>
+                (new PermohonanModel())
+                    ->where(
+                        'id_status',
+                        1
+                    )
+                    ->where(
+                        'tanggal_pengajuan >=',
+                        $tanggalMulai . ' 00:00:00'
+                    )
+                    ->where(
+                        'tanggal_pengajuan <=',
+                        $tanggalAkhir . ' 23:59:59'
+                    )
+                    ->countAllResults(),
+
+            'diproses' =>
+                (new PermohonanModel())
+                    ->where(
+                        'id_status',
+                        2
+                    )
+                    ->where(
+                        'tanggal_pengajuan >=',
+                        $tanggalMulai . ' 00:00:00'
+                    )
+                    ->where(
+                        'tanggal_pengajuan <=',
+                        $tanggalAkhir . ' 23:59:59'
+                    )
+                    ->countAllResults(),
+
+            'ditolak' =>
+                (new PermohonanModel())
+                    ->where(
+                        'id_status',
+                        3
+                    )
+                    ->where(
+                        'tanggal_pengajuan >=',
+                        $tanggalMulai . ' 00:00:00'
+                    )
+                    ->where(
+                        'tanggal_pengajuan <=',
+                        $tanggalAkhir . ' 23:59:59'
+                    )
+                    ->countAllResults(),
+
+            'selesai' =>
+                (new PermohonanModel())
+                    ->where(
+                        'id_status',
+                        4
+                    )
+                    ->where(
+                        'tanggal_pengajuan >=',
+                        $tanggalMulai . ' 00:00:00'
+                    )
+                    ->where(
+                        'tanggal_pengajuan <=',
+                        $tanggalAkhir . ' 23:59:59'
+                    )
+                    ->countAllResults(),
+
+            'diambil' =>
+                (new PermohonanModel())
+                    ->where(
+                        'id_status',
+                        5
+                    )
+                    ->where(
+                        'tanggal_pengajuan >=',
+                        $tanggalMulai . ' 00:00:00'
+                    )
+                    ->where(
+                        'tanggal_pengajuan <=',
+                        $tanggalAkhir . ' 23:59:59'
+                    )
+                    ->countAllResults(),
+        ];
+
+
+        /*
+         * =================================================
+         * VOLUME PER TUJUAN
+         * =================================================
+         *
+         * groupBy() CI4 menerima SATU parameter string.
+         * Jadi beberapa kolom dipisahkan dengan koma.
+         */
+
+        $data['tujuan'] =
+            $permohonan
+                ->select(
+                    'tujuan.nama_tujuan,
+                     COUNT(permohonan.id_permohonan) AS total'
+                )
+                ->join(
+                    'tujuan',
+                    'tujuan.id_tujuan = permohonan.id_tujuan'
+                )
+                ->where(
+                    'permohonan.tanggal_pengajuan >=',
+                    $tanggalMulai . ' 00:00:00'
+                )
+                ->where(
+                    'permohonan.tanggal_pengajuan <=',
+                    $tanggalAkhir . ' 23:59:59'
+                )
+                ->groupBy(
+                    'permohonan.id_tujuan, tujuan.nama_tujuan'
+                )
+                ->orderBy(
+                    'total',
+                    'DESC'
+                )
+                ->findAll();
+
+
+        /*
+         * =================================================
+         * TREN PERMINGGU
+         * =================================================
+         */
+
+        $data['tren'] = [];
+
+        $mulai =
+            new \DateTime(
+                $tanggalMulai
+            );
+
+        $akhir =
+            new \DateTime(
+                $tanggalAkhir
+            );
+
+        $mulai->setTime(
+            0,
+            0,
+            0
+        );
+
+        $akhir->setTime(
+            0,
+            0,
+            0
+        );
+
+        $mingguKe = 1;
+
+        $cursor =
+            clone $mulai;
+
+
+        while ($cursor <= $akhir) {
+
+            $weekStart =
+                clone $cursor;
+
+            $weekEnd =
+                clone $cursor;
+
+            $weekEnd->modify(
+                '+6 days'
+            );
+
+
+            if ($weekEnd > $akhir) {
+
+                $weekEnd =
+                    clone $akhir;
+            }
+
+
+            $jumlah =
+                (new PermohonanModel())
+                    ->where(
+                        'tanggal_pengajuan >=',
+                        $weekStart
+                            ->format('Y-m-d')
+                        . ' 00:00:00'
+                    )
+                    ->where(
+                        'tanggal_pengajuan <=',
+                        $weekEnd
+                            ->format('Y-m-d')
+                        . ' 23:59:59'
+                    )
+                    ->countAllResults();
+
+
+            $data['tren'][] = [
+                'label' =>
+                    'W' . $mingguKe,
+
+                'total' =>
+                    $jumlah,
+            ];
+
+
+            $mingguKe++;
+
+            $cursor =
+                clone $weekEnd;
+
+            $cursor->modify(
+                '+1 day'
+            );
+        }
+
+
+        /*
+         * =================================================
+         * LAPORAN BULANAN
+         * =================================================
+         */
+
+        $data['bulanan'] =
+            $permohonan
+                ->select(
+                    "
+                    DATE_FORMAT(
+                        tanggal_pengajuan,
+                        '%Y-%m'
+                    ) AS periode,
+
+                    DATE_FORMAT(
+                        tanggal_pengajuan,
+                        '%M %Y'
+                    ) AS bulan,
+
+                    COUNT(
+                        id_permohonan
+                    ) AS total
+                    "
+                )
+                ->where(
+                    'tanggal_pengajuan >=',
+                    $tanggalMulai . ' 00:00:00'
+                )
+                ->where(
+                    'tanggal_pengajuan <=',
+                    $tanggalAkhir . ' 23:59:59'
+                )
+                ->groupBy(
+                    'periode, bulan'
+                )
+                ->orderBy(
+                    'periode',
+                    'DESC'
+                )
+                ->findAll();
+
+
+        /*
+         * =================================================
+         * DATA UNTUK VIEW
+         * =================================================
+         */
+
+        $data['tanggalMulai'] =
+            $tanggalMulai;
+
+        $data['tanggalAkhir'] =
+            $tanggalAkhir;
+
+
+        return view(
+            'admin/laporan',
+            $data
+        );
     }
 }
