@@ -13,8 +13,11 @@ $routes->get('logout', 'Auth::logout');
 
 $routes->group('mahasiswa', ['filter' => 'role:mahasiswa'], static function (RouteCollection $routes) {
     $routes->get('/', 'Mahasiswa::index');
+    $routes->get('permohonan', 'Mahasiswa::index');
     $routes->get('permohonan/create', 'Mahasiswa::create');
     $routes->post('permohonan', 'Mahasiswa::store');
+    $routes->get('permohonan/(:num)', 'Mahasiswa::show/$1');
+    $routes->post('permohonan/(:num)/reupload', 'Mahasiswa::reupload/$1');
 });
 
 $routes->group('admin', ['filter' => 'role:admin'], static function (RouteCollection $routes) {
