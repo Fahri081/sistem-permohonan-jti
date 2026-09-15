@@ -2,7 +2,8 @@
 
 namespace App\Controllers;
 
-use App\Models\BerkasPermohonanModel;
+use App\Libraries\NotificationService;
+use App\Models\BuktiFisikPermohonanModel;
 use App\Models\PermohonanModel;
 use CodeIgniter\Controller;
 
@@ -145,7 +146,6 @@ class Admin extends Controller
          * Search
          */
         if ($keyword !== '') {
-
             $builder
                 ->groupStart()
                 ->like(
@@ -257,20 +257,52 @@ class Admin extends Controller
         }
 
         /*
-         * Ambil seluruh berkas
+         * Ambil semua foto bukti fisik.
+         *
+         * Satu permohonan dapat memiliki
+         * banyak foto.
          */
-        $berkas = (new BerkasPermohonanModel())
+        $buktiFisik = (new BuktiFisikPermohonanModel())
             ->where(
                 'id_permohonan',
                 $id
             )
+            ->orderBy(
+                'id_bukti',
+                'ASC'
+            )
             ->findAll();
 
+        /*
+         * Fallback untuk data lama yang hanya memiliki
+         * satu foto pada kolom permohonan.bukti_fisik.
+         */
+        if (
+            empty($buktiFisik) &&
+            ! empty($row['bukti_fisik'])
+        ) {
+            $buktiFisik = [
+                [
+                    'id_bukti' => null,
+                    'id_permohonan' => $id,
+                    'nama_file' => $row['bukti_fisik'],
+                ],
+            ];
+        }
+
+        /*
+         * Data yang dikirim ke view admin/show.
+         *
+         * 'berkas' dikosongkan agar view lama yang masih
+         * mengakses variabel tersebut tidak langsung error.
+         * Sistem sekarang menggunakan bukti fisik.
+         */
         return view(
             'admin/show',
             [
                 'permohonan' => $row,
-                'berkas' => $berkas,
+                'berkas' => [],
+                'buktiFisik' => $buktiFisik,
             ]
         );
     }
@@ -283,6 +315,47 @@ class Admin extends Controller
      */
     public function updateStatus(int $id)
     {
+        $permohonanModel = new PermohonanModel();
+        $notification = new NotificationService();
+
+        /*
+         * Ambil permohonan
+         */
+        $permohonan = $permohonanModel
+            ->select(
+                'permohonan.*,
+                 users.nama_lengkap,
+                 tujuan.nama_tujuan,
+                 status.nama_status'
+            )
+            ->join(
+                'users',
+                'users.id_user = permohonan.id_user'
+            )
+            ->join(
+                'tujuan',
+                'tujuan.id_tujuan = permohonan.id_tujuan'
+            )
+            ->join(
+                'status',
+                'status.id_status = permohonan.id_status'
+            )
+            ->find($id);
+
+        if (! $permohonan) {
+            return redirect()
+                ->back()
+                ->with(
+                    'error',
+                    'Permohonan tidak ditemukan.'
+                );
+        }
+
+        $statusLama = (int) $permohonan['id_status'];
+
+        /*
+         * Status yang dikirim dari form
+         */
         $statusName = strtoupper(
             trim(
                 (string) $this->request
@@ -291,7 +364,15 @@ class Admin extends Controller
         );
 
         /*
-         * Mapping sesuai database
+         * Alasan penolakan
+         */
+        $keteranganPenolakan = trim(
+            (string) $this->request
+                ->getPost('keterangan_penolakan')
+        );
+
+        /*
+         * Mapping status sesuai database
          *
          * 1 = Diajukan
          * 2 = Diproses
@@ -307,18 +388,35 @@ class Admin extends Controller
             'DIAMBIL'  => 5,
         ];
 
-        $statusId =
-            $map[$statusName] ?? null;
+        $statusId = $map[$statusName] ?? null;
 
         /*
-         * Validasi
+         * Validasi status
          */
         if (! $statusId) {
             return redirect()
                 ->back()
+                ->withInput()
                 ->with(
                     'error',
                     'Status tidak valid.'
+                );
+        }
+
+        /*
+         * Alasan penolakan wajib diisi
+         * jika status = DITOLAK
+         */
+        if (
+            $statusName === 'DITOLAK' &&
+            $keteranganPenolakan === ''
+        ) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with(
+                    'error',
+                    'Alasan penolakan wajib diisi terlebih dahulu.'
                 );
         }
 
@@ -350,20 +448,68 @@ class Admin extends Controller
          */
         if ($statusName === 'DITOLAK') {
             $data['keterangan_penolakan'] =
-                $this->request
-                    ->getPost(
-                        'keterangan_penolakan'
-                    );
+                $keteranganPenolakan;
+        }
+
+        /*
+         * Jika status bukan ditolak,
+         * hapus alasan penolakan lama.
+         */
+        if ($statusName !== 'DITOLAK') {
+            $data['keterangan_penolakan'] = null;
         }
 
         /*
          * Update database
          */
-        (new PermohonanModel())
-            ->update(
-                $id,
-                $data
+        if (! $permohonanModel->update($id, $data)) {
+            return redirect()
+                ->back()
+                ->with(
+                    'error',
+                    'Gagal memperbarui status permohonan.'
+                );
+        }
+
+        /*
+         * Kirim notifikasi ke mahasiswa
+         * hanya jika status benar-benar berubah.
+         */
+        if ($statusLama !== $statusId) {
+            $pesan = match ($statusName) {
+                'DIAJUKAN' =>
+                    'Permohonan #' . $id .
+                    ' berstatus Diajukan.',
+
+                'DIPROSES' =>
+                    'Permohonan #' . $id .
+                    ' sedang diproses oleh admin.',
+
+                'DITOLAK' =>
+                    'Permohonan #' . $id .
+                    ' ditolak. Alasan: ' .
+                    $keteranganPenolakan,
+
+                'SELESAI' =>
+                    'Permohonan #' . $id .
+                    ' telah selesai dan siap diambil.',
+
+                'DIAMBIL' =>
+                    'Permohonan #' . $id .
+                    ' telah ditandai sudah diambil.',
+
+                default =>
+                    'Status permohonan #' . $id .
+                    ' telah diperbarui.',
+            };
+
+            $notification->create(
+                (int) $permohonan['id_user'],
+                'Status Permohonan Diperbarui',
+                $pesan,
+                'mahasiswa/permohonan/' . $id
             );
+        }
 
         return redirect()
             ->back()
@@ -376,54 +522,62 @@ class Admin extends Controller
 
     /**
      * =====================================================
-     * UPDATE STATUS BERKAS
-     * =====================================================
-     */
-    public function updateBerkasStatus(int $id)
-    {
-        $done =
-            (int) $this->request
-                ->getPost('selesai') === 1;
-
-        (new BerkasPermohonanModel())
-            ->update(
-                $id,
-                [
-                    'selesai' => $done,
-
-                    'tanggal_selesai' =>
-                        $done
-                            ? date('Y-m-d H:i:s')
-                            : null,
-                ]
-            );
-
-        return redirect()
-            ->back()
-            ->with(
-                'success',
-                'Status berkas berhasil diperbarui.'
-            );
-    }
-
-
-    /**
-     * =====================================================
      * TANDAI SUDAH DIAMBIL
      * =====================================================
      */
     public function markPickedUp(int $id)
     {
-        (new PermohonanModel())
-            ->update(
+        $permohonanModel = new PermohonanModel();
+        $notification = new NotificationService();
+
+        $permohonan = $permohonanModel->find($id);
+
+        if (! $permohonan) {
+            return redirect()
+                ->back()
+                ->with(
+                    'error',
+                    'Permohonan tidak ditemukan.'
+                );
+        }
+
+        $statusLama = (int) $permohonan['id_status'];
+
+        /*
+         * Set status menjadi Diambil
+         */
+        if (
+            ! $permohonanModel->update(
                 $id,
                 [
                     'id_status' => 5,
-
-                    'tanggal_diambil' =>
-                        date('Y-m-d H:i:s'),
+                    'tanggal_diambil' => date(
+                        'Y-m-d H:i:s'
+                    ),
                 ]
+            )
+        ) {
+            return redirect()
+                ->back()
+                ->with(
+                    'error',
+                    'Gagal memperbarui status permohonan.'
+                );
+        }
+
+        /*
+         * Kirim notifikasi jika status sebelumnya
+         * belum Diambil.
+         */
+        if ($statusLama !== 5) {
+            $notification->create(
+                (int) $permohonan['id_user'],
+                'Permohonan Diambil',
+                'Permohonan #' . $id .
+                ' telah ditandai sudah diambil.',
+                'mahasiswa/permohonan/' . $id
             );
+        }
 
         return redirect()
             ->back()
@@ -443,7 +597,6 @@ class Admin extends Controller
     {
         $permohonan = new PermohonanModel();
 
-
         /*
          * =================================================
          * FILTER TANGGAL
@@ -457,7 +610,6 @@ class Admin extends Controller
         $tanggalAkhir =
             $this->request->getGet('akhir')
             ?: date('Y-m-t');
-
 
         /*
          * =================================================
@@ -476,7 +628,6 @@ class Admin extends Controller
                     $tanggalAkhir . ' 23:59:59'
                 )
                 ->countAllResults();
-
 
         /*
          * =================================================
@@ -567,14 +718,10 @@ class Admin extends Controller
                     ->countAllResults(),
         ];
 
-
         /*
          * =================================================
          * VOLUME PER TUJUAN
          * =================================================
-         *
-         * groupBy() CI4 menerima SATU parameter string.
-         * Jadi beberapa kolom dipisahkan dengan koma.
          */
 
         $data['tujuan'] =
@@ -603,7 +750,6 @@ class Admin extends Controller
                     'DESC'
                 )
                 ->findAll();
-
 
         /*
          * =================================================
@@ -640,9 +786,7 @@ class Admin extends Controller
         $cursor =
             clone $mulai;
 
-
         while ($cursor <= $akhir) {
-
             $weekStart =
                 clone $cursor;
 
@@ -653,13 +797,10 @@ class Admin extends Controller
                 '+6 days'
             );
 
-
             if ($weekEnd > $akhir) {
-
                 $weekEnd =
                     clone $akhir;
             }
-
 
             $jumlah =
                 (new PermohonanModel())
@@ -677,7 +818,6 @@ class Admin extends Controller
                     )
                     ->countAllResults();
 
-
             $data['tren'][] = [
                 'label' =>
                     'W' . $mingguKe,
@@ -685,7 +825,6 @@ class Admin extends Controller
                 'total' =>
                     $jumlah,
             ];
-
 
             $mingguKe++;
 
@@ -696,7 +835,6 @@ class Admin extends Controller
                 '+1 day'
             );
         }
-
 
         /*
          * =================================================
@@ -740,7 +878,6 @@ class Admin extends Controller
                 )
                 ->findAll();
 
-
         /*
          * =================================================
          * DATA UNTUK VIEW
@@ -752,7 +889,6 @@ class Admin extends Controller
 
         $data['tanggalAkhir'] =
             $tanggalAkhir;
-
 
         return view(
             'admin/laporan',

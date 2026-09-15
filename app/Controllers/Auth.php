@@ -14,15 +14,29 @@ class Auth extends Controller
         $this->users = new UserModel();
     }
 
+    /**
+     * =========================
+     * HALAMAN LOGIN
+     * =========================
+     */
     public function login()
     {
         if (session('logged_in')) {
-            return redirect()->to('/');
+            if (session('role') === 'admin') {
+                return redirect()->to('/admin');
+            }
+
+            return redirect()->to('/mahasiswa');
         }
 
         return view('auth/login');
     }
 
+    /**
+     * =========================
+     * PROSES LOGIN
+     * =========================
+     */
     public function attempt()
     {
         $rules = [
@@ -31,30 +45,73 @@ class Auth extends Controller
         ];
 
         if (! $this->validate($rules)) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('errors', $this->validator->getErrors());
         }
 
-        $user = $this->users->where('email', $this->request->getPost('email'))->first();
+        $email = trim(
+            (string) $this->request->getPost('email')
+        );
 
-        if (! $user || ! password_verify($this->request->getPost('password'), $user['password'])) {
-            return redirect()->back()->withInput()->with('error', 'Email atau password salah.');
+        $password = (string) $this->request->getPost('password');
+
+        $user = $this->users
+            ->where('email', $email)
+            ->first();
+
+        if (
+            ! $user ||
+            ! password_verify(
+                $password,
+                $user['password']
+            )
+        ) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with(
+                    'error',
+                    'Email atau password salah.'
+                );
         }
 
+        // Regenerate session untuk keamanan
         session()->regenerate();
+
         session()->set([
-            'logged_in' => true,
-            'id_user' => $user['id_user'],
+            'logged_in'    => true,
+            'id_user'      => $user['id_user'],
             'nama_lengkap' => $user['nama_lengkap'],
-            'role' => $user['role'],
-            'nim' => $user['nim'],
+            'role'         => $user['role'],
+            'nim'          => $user['nim'],
         ]);
 
-        return redirect()->to('/');
+        /*
+         * Redirect berdasarkan role
+         */
+        if ($user['role'] === 'admin') {
+            return redirect()->to('/admin');
+        }
+
+        return redirect()->to('/mahasiswa');
     }
 
+    /**
+     * =========================
+     * LOGOUT
+     * =========================
+     */
     public function logout()
     {
         session()->destroy();
-        return redirect()->to('/login')->with('success', 'Berhasil logout.');
+
+        return redirect()
+            ->to('/login')
+            ->with(
+                'success',
+                'Berhasil logout.'
+            );
     }
 }

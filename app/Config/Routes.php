@@ -7,114 +7,194 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-$routes = Services::routes();
+
+$routes->setDefaultNamespace('App\Controllers');
+$routes->setDefaultController('Home');
+$routes->setDefaultMethod('index');
+$routes->setTranslateURIDashes(false);
+$routes->set404Override();
+$routes->setAutoRoute(false);
+
 
 /*
- * --------------------------------------------------------------------
- * Router Setup
- * --------------------------------------------------------------------
- */
+|--------------------------------------------------------------------------
+| AUTHENTICATION
+|--------------------------------------------------------------------------
+*/
 
-$routes->get('/', 'Home::index');
+// Tampilkan halaman login
+$routes->get(
+    'login',
+    'Auth::login'
+);
+
+// Proses login
+$routes->post(
+    'login',
+    'Auth::attempt'
+);
+
+// Logout
+$routes->get(
+    'logout',
+    'Auth::logout'
+);
+
 
 /*
- * --------------------------------------------------------------------
- * Authentication
- * --------------------------------------------------------------------
- */
+|--------------------------------------------------------------------------
+| ROOT
+|--------------------------------------------------------------------------
+|
+| Setelah login, Auth akan mengarahkan user
+| ke dashboard berdasarkan role masing-masing.
+|
+*/
 
-$routes->get('login', 'Auth::login');
-$routes->post('login', 'Auth::attempt');
-$routes->get('logout', 'Auth::logout');
+$routes->get(
+    '/',
+    'Auth::login'
+);
+
 
 /*
- * --------------------------------------------------------------------
- * Mahasiswa
- * --------------------------------------------------------------------
- */
+|--------------------------------------------------------------------------
+| MAHASISWA
+|--------------------------------------------------------------------------
+*/
 
 $routes->group(
     'mahasiswa',
     ['filter' => 'role:mahasiswa'],
     static function (RouteCollection $routes) {
 
-        // Dashboard mahasiswa
-        $routes->get('/', 'Mahasiswa::index');
+        // Dashboard Mahasiswa
+        $routes->get(
+            '/',
+            'Mahasiswa::index'
+        );
 
-        // Form ajukan permohonan
-        $routes->get('permohonan/create', 'Mahasiswa::create');
+        // Permohonan Saya
+        $routes->get(
+            'permohonan',
+            'Mahasiswa::permohonan'
+        );
 
-        // Simpan permohonan
-        $routes->post('permohonan', 'Mahasiswa::store');
+        // Form Ajukan Permohonan Baru
+        $routes->get(
+            'permohonan/create',
+            'Mahasiswa::create'
+        );
+
+        // Simpan Permohonan Baru
+        $routes->post(
+            'permohonan',
+            'Mahasiswa::store'
+        );
+
+        // Detail Permohonan
+        $routes->get(
+            'permohonan/(:num)',
+            'Mahasiswa::show/$1'
+        );
+
+        // Ubah / Perbaiki Bukti Fisik
+        $routes->post(
+            'permohonan/(:num)/bukti-fisik',
+            'Mahasiswa::updateBuktiFisik/$1'
+        );
+
+        // Ajukan ulang permohonan yang ditolak
+        $routes->post(
+            'permohonan/(:num)/reupload',
+            'Mahasiswa::reupload/$1'
+        );
+
+        // Profil Mahasiswa
+        $routes->get(
+            'profil',
+            'Mahasiswa::profil'
+        );
+
+        // Update Profil Mahasiswa
+        $routes->post(
+            'profil',
+            'Mahasiswa::updateProfil'
+        );
     }
 );
 
+
 /*
- * --------------------------------------------------------------------
- * Admin
- * --------------------------------------------------------------------
- */
+|--------------------------------------------------------------------------
+| ADMIN
+|--------------------------------------------------------------------------
+*/
 
 $routes->group(
     'admin',
     ['filter' => 'role:admin'],
     static function (RouteCollection $routes) {
 
-        // Dashboard admin
-        $routes->get('/', 'Admin::index');
+        // Dashboard Admin
+        $routes->get(
+            '/',
+            'Admin::index'
+        );
 
-        // Semua permohonan
-        $routes->get('permohonan', 'Admin::all');
+        // Semua Permohonan
+        $routes->get(
+            'permohonan',
+            'Admin::all'
+        );
 
-        // Detail permohonan
-        $routes->get('permohonan/(:num)', 'Admin::show/$1');
+        // Detail Permohonan
+        $routes->get(
+            'permohonan/(:num)',
+            'Admin::show/$1'
+        );
 
-        // Update status permohonan
+        // Update Status Permohonan
         $routes->post(
             'permohonan/(:num)/status',
             'Admin::updateStatus/$1'
         );
 
-        // Update status berkas
+        // Tandai Permohonan Sudah Diambil
         $routes->post(
-            'berkas/(:num)/status',
-            'Admin::updateBerkasStatus/$1'
-        );
-
-        // Tandai permohonan sudah diambil
-        $routes->post(
-            'permohonan/(:num)/ambil',
+            'permohonan/(:num)/pickup',
             'Admin::markPickedUp/$1'
         );
 
-        // Laporan dan statistik
-        $routes->get('laporan', 'Admin::laporan');
+        // Laporan
+        $routes->get(
+            'laporan',
+            'Admin::laporan'
+        );
     }
 );
 
+
 /*
- * --------------------------------------------------------------------
- * Notifications
- * --------------------------------------------------------------------
- */
+|--------------------------------------------------------------------------
+| NOTIFICATIONS
+|--------------------------------------------------------------------------
+*/
 
-$routes->get('notifications', 'Notification::index');
+// Daftar notifikasi
+$routes->get(
+    'notifications',
+    'Notification::index'
+);
 
+// Tandai satu notifikasi sudah dibaca
 $routes->get(
     'notifications/read/(:num)',
     'Notification::read/$1'
 );
 
+// Tandai semua notifikasi sudah dibaca
 $routes->get(
     'notifications/read-all',
     'Notification::readAll'
 );
-
-/*
- * --------------------------------------------------------------------
- * Auto Routing
- * --------------------------------------------------------------------
- */
-
-// Jangan aktifkan Auto Routing
-$routes->setAutoRoute(false);
