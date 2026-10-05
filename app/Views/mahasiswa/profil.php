@@ -9,7 +9,7 @@
     .profile-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; overflow: hidden; box-shadow: 0 2px 8px rgba(15,23,42,.04); }
     .profile-top { padding: 28px; background: linear-gradient(135deg,#f8fbff,#fff); border-bottom: 1px solid #e2e8f0; display:flex; align-items:center; gap:18px; }
     .profile-avatar { width:76px; height:76px; border-radius:50%; object-fit:cover; border:3px solid #fff; box-shadow:0 3px 10px rgba(15,23,42,.12); }
-    .profile-avatar-fallback { width:76px; height:76px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:#133863; color:#fff; font-size:25px; font-weight:800; }
+    .profile-avatar-fallback { width:76px; height:76px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:#173F70; color:#fff; font-size:25px; font-weight:800; }
     .profile-top h3 { font-size:19px; margin-bottom:5px; color:#1e293b; }
     .profile-top span { font-size:13px; color:#64748b; }
     .profile-body { padding:28px; }
@@ -22,66 +22,296 @@
     .form-group input[readonly] { background:#f8fafc; color:#64748b; }
     .hint { font-size:11.5px; color:#94a3b8; }
     .form-actions { margin-top:24px; display:flex; justify-content:flex-end; }
-    .btn-save { border:0; background:#133863; color:#fff; padding:11px 18px; border-radius:9px; font:600 13px inherit; cursor:pointer; }
-    .btn-save:hover { background:#0f2e51; }
+    .btn-save { border:0; background:#173F70; color:#fff; padding:11px 18px; border-radius:9px; font:600 13px inherit; cursor:pointer; }
+    .btn-save:hover { background:#142E52; }
     @media(max-width:700px){ .form-grid{grid-template-columns:1fr}.form-group.full{grid-column:auto}.profile-body,.profile-top{padding:20px}.profile-avatar,.profile-avatar-fallback{width:64px;height:64px}.profile-top h3{font-size:17px} }
+    /* =========================================================
+   FOTO PROFIL - KLIK UNTUK GANTI
+========================================================= */
+
+.profile-photo-form {
+    margin: 0;
+    padding: 0;
+}
+
+.profile-avatar-clickable {
+    position: relative;
+
+    width: 76px;
+    height: 76px;
+
+    display: block;
+
+    cursor: pointer;
+}
+
+.profile-avatar-clickable .profile-avatar,
+.profile-avatar-clickable .profile-avatar-fallback {
+    width: 76px;
+    height: 76px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    object-fit: cover;
+
+    border: 3px solid #fff;
+
+    box-shadow:
+        0 3px 10px rgba(15, 23, 42, .12);
+
+    transition:
+        transform .15s ease,
+        box-shadow .15s ease;
+}
+
+.profile-avatar-clickable:hover .profile-avatar,
+.profile-avatar-clickable:hover .profile-avatar-fallback {
+    transform: scale(1.03);
+
+    box-shadow:
+        0 5px 14px rgba(15, 23, 42, .18);
+}
+
+
+/* HP */
+
+@media (max-width: 700px) {
+
+    .profile-avatar-clickable {
+        width: 64px;
+        height: 64px;
+    }
+
+    .profile-avatar-clickable .profile-avatar,
+    .profile-avatar-clickable .profile-avatar-fallback {
+        width: 64px;
+        height: 64px;
+    }
+
+}
 </style>
 
 <div class="profile-page">
+
     <div class="page-heading">
         <h2>Profil Mahasiswa</h2>
-        <p>Kelola informasi pribadi yang digunakan dalam Sistem Tanda Tangan JTI.</p>
+        <p>
+            Kelola informasi pribadi yang digunakan dalam Sistem Tanda Tangan JTI.
+        </p>
     </div>
 
+
     <div class="profile-card">
+
+        <!-- =========================================
+             BAGIAN FOTO + IDENTITAS
+        ========================================== -->
         <div class="profile-top">
-            <img
-                src="<?= base_url('assets/images/avatar_budi.jpg') ?>"
-                alt="<?= esc($user['nama_lengkap']) ?>"
-                class="profile-avatar"
-                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+
+            <form
+                action="<?= site_url('mahasiswa/profil/foto') ?>"
+                method="post"
+                enctype="multipart/form-data"
+                id="formFotoProfil"
+                class="profile-photo-form"
             >
-            <div class="profile-avatar-fallback" style="display:none;">
-                <?= esc(strtoupper(substr($user['nama_lengkap'], 0, 1))) ?>
-            </div>
+                <?= csrf_field() ?>
+
+                <input
+                    type="file"
+                    name="foto_profil"
+                    id="foto_profil"
+                    accept="image/jpeg,image/png,image/webp"
+                    hidden
+                >
+
+                <?php
+                    $fotoProfil = trim(
+                        (string) ($user['foto_profil'] ?? '')
+                    );
+
+                    $fotoProfilUrl = $fotoProfil !== ''
+                        ? base_url('uploads/profil/' . $fotoProfil)
+                        : base_url('assets/images/avatar_budi.jpg');
+                ?>
+
+                <label
+                    for="foto_profil"
+                    class="profile-avatar-clickable"
+                    title="Klik untuk mengganti foto profil"
+                >
+
+                    <img
+                        src="<?= esc($fotoProfilUrl) ?>"
+                        alt="<?= esc($user['nama_lengkap']) ?>"
+                        class="profile-avatar"
+                        onerror="
+                            this.style.display='none';
+                            this.nextElementSibling.style.display='flex';
+                        "
+                    >
+
+                    <div
+                        class="profile-avatar-fallback"
+                        style="display:none;"
+                    >
+                        <?= esc(
+                            strtoupper(
+                                substr(
+                                    $user['nama_lengkap'] ?? 'M',
+                                    0,
+                                    1
+                                )
+                            )
+                        ) ?>
+                    </div>
+
+                </label>
+
+            </form>
+
+
             <div>
-                <h3><?= esc($user['nama_lengkap']) ?></h3>
-                <span>Mahasiswa · NIM <?= esc($user['nim'] ?? '-') ?></span>
+                <h3>
+                    <?= esc($user['nama_lengkap']) ?>
+                </h3>
+
+                <span>
+                    Mahasiswa · NIM <?= esc($user['nim'] ?? '-') ?>
+                </span>
             </div>
+
         </div>
 
+
+        <!-- =========================================
+             BAGIAN DATA DIRI
+        ========================================== -->
         <div class="profile-body">
-            <form action="<?= site_url('mahasiswa/profil') ?>" method="post">
+
+            <form
+                action="<?= site_url('mahasiswa/profil') ?>"
+                method="post"
+            >
+
                 <?= csrf_field() ?>
 
                 <div class="form-grid">
+
                     <div class="form-group full">
-                        <label for="nama_lengkap">Nama Lengkap</label>
-                        <input type="text" id="nama_lengkap" name="nama_lengkap" value="<?= esc($user['nama_lengkap'] ?? '') ?>" required>
+
+                        <label for="nama_lengkap">
+                            Nama Lengkap
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nama_lengkap"
+                            name="nama_lengkap"
+                            value="<?= esc($user['nama_lengkap'] ?? '') ?>"
+                            required
+                        >
+
                     </div>
 
-                    <div class="form-group">
-                        <label for="nim">NIM</label>
-                        <input type="text" id="nim" value="<?= esc($user['nim'] ?? '-') ?>" readonly>
-                        <span class="hint">NIM merupakan identitas mahasiswa dan tidak dapat diubah.</span>
-                    </div>
 
                     <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" value="<?= esc($user['email'] ?? '') ?>" required>
+
+                        <label for="nim">
+                            NIM
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nim"
+                            value="<?= esc($user['nim'] ?? '-') ?>"
+                            readonly
+                        >
+
+                        <span class="hint">
+                            NIM merupakan identitas mahasiswa dan tidak dapat diubah.
+                        </span>
+
                     </div>
 
+
                     <div class="form-group">
-                        <label for="no_hp">Nomor HP</label>
-                        <input type="text" id="no_hp" name="no_hp" value="<?= esc($user['no_hp'] ?? '') ?>" placeholder="Contoh: 081234567890">
+
+                        <label for="email">
+                            Email
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            value="<?= esc($user['email'] ?? '') ?>"
+                            required
+                        >
+
                     </div>
+
+
+                    <div class="form-group">
+
+                        <label for="no_hp">
+                            Nomor HP
+                        </label>
+
+                        <input
+                            type="text"
+                            id="no_hp"
+                            name="no_hp"
+                            value="<?= esc($user['no_hp'] ?? '') ?>"
+                            placeholder="Contoh: 081234567890"
+                        >
+
+                    </div>
+
                 </div>
+
 
                 <div class="form-actions">
-                    <button type="submit" class="btn-save">Simpan Perubahan</button>
+
+                    <button
+                        type="submit"
+                        class="btn-save"
+                    >
+                        Simpan Perubahan
+                    </button>
+
                 </div>
+
             </form>
+
         </div>
+
     </div>
+
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const inputFoto = document.getElementById('foto_profil');
+    const formFoto = document.getElementById('formFotoProfil');
+
+    if (!inputFoto || !formFoto) {
+        return;
+    }
+
+    inputFoto.addEventListener('change', function () {
+
+        if (!this.files || !this.files.length) {
+            return;
+        }
+
+        formFoto.submit();
+    });
+
+});
+</script>
 <?= $this->endSection() ?>

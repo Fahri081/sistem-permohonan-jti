@@ -9,20 +9,29 @@ Dashboard Admin - JTI Signature
 <?php
 $statistik = is_array($statistik ?? null) ? $statistik : [];
 $aktivitas = is_array($aktivitas ?? null) ? $aktivitas : [];
+$perluPerhatian = is_array($perluPerhatian ?? null)
+    ? $perluPerhatian
+    : [];
 
-$total    = (int) ($statistik['total'] ?? 0);
+$total = (int) ($statistik['total'] ?? 0);
 $diajukan = (int) ($statistik['diajukan'] ?? 0);
 $diproses = (int) ($statistik['diproses'] ?? 0);
-$ditolak  = (int) ($statistik['ditolak'] ?? 0);
-$selesai  = (int) ($statistik['selesai'] ?? 0);
-$diambil  = (int) ($statistik['diambil'] ?? 0);
-
+$ditolak = (int) ($statistik['ditolak'] ?? 0);
+$selesai = (int) ($statistik['selesai'] ?? 0);
+$diambil = (int) ($statistik['diambil'] ?? 0);
 $selesaiDiambil = $selesai + $diambil;
+$menungguPengambilan = (int) (
+    $statistik['menunggu_pengambilan'] ?? 0
+);
 
-$adminName = trim((string) (session('nama_lengkap') ?? session('username') ?? 'Admin'));
+$adminName = trim(
+    (string) (session('nama_lengkap') ?? session('username') ?? 'Admin')
+);
+
 if ($adminName === '') {
     $adminName = 'Admin';
 }
+
 $firstName = explode(' ', $adminName)[0];
 
 $statusMeta = [
@@ -31,25 +40,35 @@ $statusMeta = [
         'class' => 'status-diajukan',
         'icon' => 'fa-regular fa-paper-plane',
     ],
+
     'DIPROSES' => [
         'label' => 'Diproses',
         'class' => 'status-diproses',
         'icon' => 'fa-solid fa-spinner',
     ],
+
     'DITOLAK' => [
         'label' => 'Ditolak',
         'class' => 'status-ditolak',
         'icon' => 'fa-solid fa-circle-xmark',
     ],
+
     'SELESAI' => [
         'label' => 'Selesai',
         'class' => 'status-selesai',
         'icon' => 'fa-regular fa-circle-check',
     ],
+
     'DIAMBIL' => [
         'label' => 'Diambil',
         'class' => 'status-diambil',
         'icon' => 'fa-solid fa-box-open',
+    ],
+
+    'MENUNGGU VERIFIKASI PENGAMBILAN' => [
+        'label' => 'Menunggu Verifikasi',
+        'class' => 'status-menunggu',
+        'icon' => 'fa-solid fa-clock',
     ],
 ];
 
@@ -68,11 +87,20 @@ function adminFormatDate(?string $date): string
 ?>
 
 <style>
+    /* =========================================
+       BASE DASHBOARD
+    ========================================= */
+
     .admin-dashboard {
         width: 100%;
         max-width: 1240px;
         margin: 0 auto;
     }
+
+
+    /* =========================================
+       HERO
+    ========================================= */
 
     .dashboard-hero {
         position: relative;
@@ -80,10 +108,25 @@ function adminFormatDate(?string $date): string
         margin-bottom: 24px;
         padding: 26px 28px;
         border-radius: 20px;
+
         background:
-            radial-gradient(circle at 92% 15%, rgba(255,255,255,.18), transparent 26%),
-            radial-gradient(circle at 72% 110%, rgba(79,70,229,.34), transparent 34%),
-            linear-gradient(135deg, #142e52 0%, #173f70 56%, #2563eb 100%);
+            radial-gradient(
+                circle at 92% 15%,
+                rgba(255,255,255,.18),
+                transparent 26%
+            ),
+            radial-gradient(
+                circle at 72% 110%,
+                rgba(79,70,229,.34),
+                transparent 34%
+            ),
+            linear-gradient(
+                135deg,
+                #142e52 0%,
+                #173f70 56%,
+                #2563eb 100%
+            );
+
         color: #fff;
         box-shadow: 0 18px 38px rgba(20,46,82,.14);
     }
@@ -102,9 +145,11 @@ function adminFormatDate(?string $date): string
     .hero-content {
         position: relative;
         z-index: 1;
+
         display: flex;
         align-items: flex-end;
         justify-content: space-between;
+
         gap: 24px;
     }
 
@@ -157,12 +202,20 @@ function adminFormatDate(?string $date): string
         font-weight: 700;
     }
 
-    /* STATS */
+
+    /* =========================================
+       STATS
+    ========================================= */
+
     .stats-grid {
         display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 14px;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 12px;
         margin-bottom: 24px;
+    }
+
+    .stat-card {
+        min-width: 0;
     }
 
     .stat-card {
@@ -173,7 +226,12 @@ function adminFormatDate(?string $date): string
         border-radius: 16px;
         background: #fff;
         box-shadow: var(--shadow-sm);
-        transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+
+        transition:
+            transform .18s ease,
+            box-shadow .18s ease,
+            border-color .18s ease;
+
         overflow: hidden;
     }
 
@@ -195,7 +253,12 @@ function adminFormatDate(?string $date): string
     }
 
     .stat-card.dark {
-        background: linear-gradient(145deg, #102a4b 0%, #173f70 100%);
+        background: linear-gradient(
+            145deg,
+            #102a4b 0%,
+            #173f70 100%
+        );
+
         border-color: #173f70;
     }
 
@@ -226,9 +289,11 @@ function adminFormatDate(?string $date): string
         width: 36px;
         height: 36px;
         border-radius: 11px;
+
         display: inline-flex;
         align-items: center;
         justify-content: center;
+
         flex: 0 0 auto;
     }
 
@@ -278,7 +343,11 @@ function adminFormatDate(?string $date): string
         line-height: 1.4;
     }
 
-    /* CONTENT GRID */
+
+    /* =========================================
+       CONTENT GRID
+    ========================================= */
+
     .dashboard-grid {
         display: grid;
         grid-template-columns: minmax(0, 1.55fr) minmax(300px, .8fr);
@@ -297,9 +366,11 @@ function adminFormatDate(?string $date): string
     .panel-head {
         padding: 17px 18px 15px;
         border-bottom: 1px solid var(--border-light);
+
         display: flex;
         align-items: center;
         justify-content: space-between;
+
         gap: 12px;
     }
 
@@ -343,7 +414,11 @@ function adminFormatDate(?string $date): string
         color: var(--royal-dark);
     }
 
-    /* RECENT REQUEST TABLE */
+
+    /* =========================================
+       RECENT REQUEST TABLE
+    ========================================= */
+
     .table-wrap {
         overflow-x: auto;
     }
@@ -357,14 +432,18 @@ function adminFormatDate(?string $date): string
     .requests-table th {
         padding: 11px 14px;
         border-bottom: 1px solid var(--border-light);
+
         color: #98a2b3;
         background: #fbfcfe;
+
         font-size: 8.5px;
         line-height: 1.3;
         font-weight: 800;
+
         text-align: left;
         letter-spacing: .08em;
         text-transform: uppercase;
+
         white-space: nowrap;
     }
 
@@ -404,12 +483,16 @@ function adminFormatDate(?string $date): string
         width: 30px;
         height: 30px;
         border-radius: 10px;
+
         background: #edf4ff;
         color: var(--royal);
+
         display: flex;
         align-items: center;
         justify-content: center;
+
         flex: 0 0 30px;
+
         font-size: 10px;
         font-weight: 800;
     }
@@ -420,12 +503,15 @@ function adminFormatDate(?string $date): string
 
     .student-name strong {
         display: block;
+
         color: #344054;
         font-size: 10.5px;
         font-weight: 800;
+
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+
         max-width: 170px;
     }
 
@@ -449,14 +535,22 @@ function adminFormatDate(?string $date): string
         white-space: nowrap;
     }
 
+
+    /* =========================================
+       STATUS
+    ========================================= */
+
     .status-pill {
         display: inline-flex;
         align-items: center;
         gap: 5px;
+
         padding: 5px 9px;
         border-radius: 999px;
+
         font-size: 8.8px;
         font-weight: 800;
+
         white-space: nowrap;
     }
 
@@ -490,18 +584,35 @@ function adminFormatDate(?string $date): string
         border: 1px solid #e8e6ff;
     }
 
+    .status-menunggu {
+        color: #9a6700;
+        background: #fff8e6;
+        border: 1px solid #f5df9a;
+    }
+
+
+    /* =========================================
+       DETAIL BUTTON
+    ========================================= */
+
     .detail-btn {
         display: inline-flex;
         align-items: center;
         gap: 5px;
+
         padding: 7px 9px;
+
         border: 1px solid #dce6f5;
         border-radius: 9px;
+
         background: #fff;
         color: var(--navy);
+
         text-decoration: none;
+
         font-size: 9px;
         font-weight: 800;
+
         white-space: nowrap;
     }
 
@@ -510,6 +621,11 @@ function adminFormatDate(?string $date): string
         border-color: #c6d9fb;
         background: #f8fbff;
     }
+
+
+    /* =========================================
+       EMPTY TABLE
+    ========================================= */
 
     .empty-table {
         padding: 44px 20px;
@@ -520,12 +636,15 @@ function adminFormatDate(?string $date): string
         width: 52px;
         height: 52px;
         margin: 0 auto 11px;
+
         border-radius: 14px;
         background: #f4f7fc;
         color: #98a2b3;
+
         display: flex;
         align-items: center;
         justify-content: center;
+
         font-size: 19px;
     }
 
@@ -542,21 +661,208 @@ function adminFormatDate(?string $date): string
         font-size: 10px;
     }
 
-    /* SUMMARY */
+
+    /* =========================================
+       DISTRIBUTION
+    ========================================= */
+
+    .distribution-body {
+        display: grid;
+        grid-template-columns: 128px minmax(0, 1fr);
+        gap: 12px;
+
+        align-items: center;
+
+        padding: 12px 18px 6px;
+    }
+
+    .distribution-chart {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .chart-wrap {
+        position: relative;
+        width: 118px;
+        height: 118px;
+    }
+
+    .chart-wrap canvas {
+        width: 118px !important;
+        height: 118px !important;
+    }
+
+    .chart-center {
+        position: absolute;
+        inset: 0;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        pointer-events: none;
+    }
+
+    .chart-center strong {
+        color: var(--navy);
+        font-size: 20px;
+        line-height: 1;
+        font-weight: 800;
+    }
+
+    .chart-center span {
+        margin-top: 4px;
+        color: var(--muted-light);
+        font-size: 8.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+    }
+
+
+    /* =========================================
+       PERLU PERHATIAN
+    ========================================= */
+
+    .attention-panel {
+        margin-top: 18px;
+    }
+
+    .attention-list {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .attention-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        padding: 13px 18px;
+
+        border-bottom: 1px solid var(--border-light);
+
+        text-decoration: none;
+        transition: background .15s ease;
+    }
+
+    .attention-item:last-child {
+        border-bottom: 0;
+    }
+
+    .attention-item:hover {
+        background: #fbfdff;
+    }
+
+    .attention-icon {
+        width: 36px;
+        height: 36px;
+        flex: 0 0 36px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 10px;
+        background: #fff7e8;
+        color: #d97706;
+    }
+
+    .attention-content {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .attention-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 10px;
+    }
+
+    .attention-id {
+        color: var(--navy);
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+    .attention-name {
+        margin-top: 2px;
+        color: #667085;
+        font-size: 9.5px;
+    }
+
+    .attention-meta {
+        margin-top: 3px;
+        color: var(--muted-light);
+        font-size: 8.8px;
+    }
+
+    .attention-arrow {
+        color: #aab4c3;
+        font-size: 10px;
+        flex: 0 0 auto;
+    }
+
+    .attention-empty {
+        padding: 28px 18px;
+        text-align: center;
+    }
+
+    .attention-empty-icon {
+        width: 42px;
+        height: 42px;
+        margin: 0 auto 9px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 12px;
+        background: #f4f7fc;
+        color: #94a3b8;
+    }
+
+    .attention-empty strong {
+        color: #344054;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .attention-empty p {
+        margin-top: 4px;
+        color: var(--muted-light);
+        font-size: 9.5px;
+    }
+
+
+    /* =========================================
+       SUMMARY
+    ========================================= */
+
     .summary-list {
-        padding: 5px 18px 16px;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        padding: 0;
     }
 
     .summary-item {
+        min-width: 0;
+        min-height: 58px;
+        padding: 10px 11px;
+
         display: flex;
         align-items: center;
-        gap: 10px;
-        padding: 12px 0;
-        border-bottom: 1px solid var(--border-light);
-    }
+        gap: 8px;
 
-    .summary-item:last-child {
-        border-bottom: 0;
+        border: 1px solid var(--border-light);
+        border-radius: 11px;
+
+        background: #fbfcfe;
     }
 
     .summary-dot {
@@ -589,21 +895,34 @@ function adminFormatDate(?string $date): string
     .summary-label {
         flex: 1;
         color: #667085;
-        font-size: 10.5px;
+        font-size: 9.5px;
         font-weight: 600;
     }
 
     .summary-value {
         color: var(--navy);
-        font-size: 12px;
+        font-size: 14px;
         font-weight: 800;
     }
+
+
+    /* =========================================
+       COMPLETION
+    ========================================= */
 
     .completion-box {
         margin: 0 18px 18px;
         padding: 14px;
+
         border-radius: 13px;
-        background: linear-gradient(135deg, #f5f8ff 0%, #eef2ff 100%);
+
+        background:
+            linear-gradient(
+                135deg,
+                #f5f8ff 0%,
+                #eef2ff 100%
+            );
+
         border: 1px solid #e1e8ff;
     }
 
@@ -611,6 +930,7 @@ function adminFormatDate(?string $date): string
         display: flex;
         align-items: center;
         justify-content: space-between;
+
         gap: 10px;
         margin-bottom: 8px;
     }
@@ -631,14 +951,22 @@ function adminFormatDate(?string $date): string
         width: 100%;
         height: 7px;
         border-radius: 999px;
+
         background: rgba(37,99,235,.11);
+
         overflow: hidden;
     }
 
     .progress-fill {
         height: 100%;
         border-radius: inherit;
-        background: linear-gradient(90deg, var(--royal), var(--indigo));
+
+        background:
+            linear-gradient(
+                90deg,
+                var(--royal),
+                var(--indigo)
+            );
     }
 
     .completion-note {
@@ -648,7 +976,11 @@ function adminFormatDate(?string $date): string
         line-height: 1.5;
     }
 
-    /* QUICK ACTIONS */
+
+    /* =========================================
+       QUICK ACTIONS
+    ========================================= */
+
     .quick-actions {
         margin-top: 18px;
         padding: 17px 18px 18px;
@@ -663,17 +995,21 @@ function adminFormatDate(?string $date): string
 
     .action-grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 9px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
     }
 
     .action-card {
         min-height: 76px;
         padding: 11px;
+
         border: 1px solid var(--border);
         border-radius: 12px;
+
         background: #fff;
+
         text-decoration: none;
+
         transition: all .16s ease;
     }
 
@@ -687,12 +1023,16 @@ function adminFormatDate(?string $date): string
         width: 29px;
         height: 29px;
         margin-bottom: 8px;
+
         border-radius: 9px;
+
         display: inline-flex;
         align-items: center;
         justify-content: center;
+
         background: #eaf1ff;
         color: var(--royal);
+
         font-size: 12px;
     }
 
@@ -706,23 +1046,41 @@ function adminFormatDate(?string $date): string
     .action-card span {
         display: block;
         margin-top: 2px;
+
         color: #98a2b3;
         font-size: 8.5px;
         line-height: 1.35;
     }
 
-    /* RESPONSIVE */
-    @media (max-width: 1120px) {
+
+    /* =========================================
+       RESPONSIVE DASHBOARD
+    ========================================= */
+
+    @media (max-width: 1000px) {
+
         .stats-grid {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-template-columns: repeat(
+                3,
+                minmax(0, 1fr)
+            );
         }
 
         .dashboard-grid {
             grid-template-columns: 1fr;
         }
+
     }
 
+
+    /* =========================================
+       TABLET / MOBILE
+    ========================================= */
+
     @media (max-width: 760px) {
+
+        /* HERO */
+
         .dashboard-hero {
             padding: 22px 20px;
             border-radius: 17px;
@@ -731,23 +1089,169 @@ function adminFormatDate(?string $date): string
         .hero-content {
             align-items: flex-start;
             flex-direction: column;
+            gap: 16px;
         }
 
         .hero-date {
             min-width: 0;
             width: 100%;
+            box-sizing: border-box;
         }
 
+
+        /* STATISTIK */
+
         .stats-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-template-columns: repeat(
+                2,
+                minmax(0, 1fr)
+            );
         }
+
+
+        /* GRID UTAMA */
+
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+
+
+        /* PANEL */
+
+        .panel {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+
+        /* DISTRIBUSI STATUS */
+
+        .distribution-body {
+            display: grid;
+
+            grid-template-columns: 1fr;
+
+            gap: 14px;
+
+            padding: 16px 18px 8px;
+
+            align-items: center;
+        }
+
+        .distribution-chart {
+            width: 100%;
+            margin-bottom: 0;
+        }
+
+
+        /*
+         * PENTING:
+         * batasi ukuran chart dashboard
+         * supaya tidak ikut membesar karena
+         * CSS responsive global.
+         */
+
+        .admin-dashboard
+        .distribution-chart
+        .chart-wrap {
+
+            position: relative;
+
+            width: 118px !important;
+            height: 118px !important;
+
+            min-width: 118px;
+            min-height: 118px;
+
+            margin: 0 auto;
+
+            box-sizing: border-box;
+        }
+
+        .admin-dashboard
+        .distribution-chart
+        .chart-wrap
+        canvas {
+
+            width: 118px !important;
+            height: 118px !important;
+
+            max-width: 118px;
+            max-height: 118px;
+        }
+
+
+        /* SUMMARY STATUS */
+
+        .admin-dashboard
+        .distribution-body
+        .summary-list {
+
+            width: 100%;
+
+            padding: 0;
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    2,
+                    minmax(0, 1fr)
+                );
+
+            gap: 8px;
+
+            box-sizing: border-box;
+        }
+
+        .admin-dashboard
+        .distribution-body
+        .summary-item {
+
+            min-width: 0;
+            min-height: 58px;
+
+            box-sizing: border-box;
+        }
+
+
+        /* TABEL */
+
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .requests-table {
+            min-width: 720px;
+        }
+
+
+        /* QUICK ACTION */
 
         .action-grid {
             grid-template-columns: 1fr;
         }
+
+        .action-card {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
     }
 
+
+    /* =========================================
+       SMALL MOBILE
+    ========================================= */
+
     @media (max-width: 480px) {
+
+        /* STATISTIK */
+
         .stats-grid {
             grid-template-columns: 1fr;
         }
@@ -755,6 +1259,9 @@ function adminFormatDate(?string $date): string
         .stat-card {
             min-height: 122px;
         }
+
+
+        /* PANEL HEADER */
 
         .panel-head {
             align-items: flex-start;
@@ -764,117 +1271,375 @@ function adminFormatDate(?string $date): string
         .panel-link {
             align-self: flex-start;
         }
+
+
+        /* DISTRIBUSI STATUS */
+
+        .admin-dashboard
+        .distribution-body {
+
+            padding:
+                16px
+                14px
+                8px;
+        }
+
+        .admin-dashboard
+        .distribution-body
+        .summary-list {
+
+            grid-template-columns:
+                repeat(
+                    2,
+                    minmax(0, 1fr)
+                );
+
+            gap: 8px;
+        }
+
+
+        /* SUMMARY ITEM */
+
+        .admin-dashboard
+        .summary-item {
+
+            padding: 10px 9px;
+
+            gap: 7px;
+        }
+
+        .admin-dashboard
+        .summary-label {
+
+            font-size: 9px;
+            line-height: 1.25;
+        }
+
+        .admin-dashboard
+        .summary-value {
+
+            font-size: 14px;
+        }
+
+
+        /* DONUT CHART */
+
+        .admin-dashboard
+        .distribution-chart
+        .chart-wrap {
+
+            width: 118px !important;
+            height: 118px !important;
+        }
+
+        .admin-dashboard
+        .distribution-chart
+        .chart-wrap
+        canvas {
+
+            width: 118px !important;
+            height: 118px !important;
+        }
+
+
+        /* COMPLETION BOX */
+
+        .completion-box {
+            margin-left: 14px;
+            margin-right: 14px;
+        }
+
+
+        /* QUICK ACTION */
+
+        .quick-actions {
+            padding:
+                15px
+                14px
+                16px;
+        }
+
     }
+
 </style>
+
 
 <div class="admin-dashboard">
 
-    <!-- HERO -->
+    <!-- =========================================
+         HERO
+    ========================================== -->
+
     <section class="dashboard-hero">
+
         <div class="hero-content">
 
             <div>
-                <div class="hero-kicker">JTI Signature · Panel Administrator</div>
+
+                <div class="hero-kicker">
+                    JTI Signature · Panel Administrator
+                </div>
 
                 <h1 class="hero-title">
                     Selamat datang, <?= esc($firstName) ?> 👋
                 </h1>
 
                 <p class="hero-description">
-                    Pantau pengajuan mahasiswa, periksa bukti pengumpulan berkas fisik,
+                    Pantau pengajuan mahasiswa,
+                    periksa bukti pengumpulan berkas fisik,
                     dan kelola status permohonan dari satu tempat.
                 </p>
+
             </div>
 
             <div class="hero-date">
-                <span class="hero-date-label">Hari ini</span>
+
+                <span class="hero-date-label">
+                    Hari ini
+                </span>
+
                 <span class="hero-date-value">
                     <?= date('d F Y') ?>
                 </span>
+
             </div>
 
         </div>
+
     </section>
 
-    <!-- STATS -->
+
+    <!-- =========================================
+         STATS
+    ========================================== -->
+
     <section class="stats-grid">
 
+
+        <!-- TOTAL -->
+
         <article class="stat-card dark">
+
             <div class="stat-top">
-                <div class="stat-label">Total Permohonan</div>
+
+                <div class="stat-label">
+                    Total
+                </div>
+
                 <div class="stat-icon yellow">
                     <i class="fa-regular fa-file-lines"></i>
                 </div>
+
             </div>
 
-            <div class="stat-value"><?= number_format($total) ?></div>
-            <div class="stat-helper">Seluruh pengajuan yang tersimpan</div>
+            <div class="stat-value">
+                <?= number_format($total) ?>
+            </div>
+
+            <div class="stat-helper">
+                Seluruh pengajuan
+            </div>
+
         </article>
 
+
+        <!-- DIAJUKAN -->
+
         <article class="stat-card">
+
             <div class="stat-top">
-                <div class="stat-label">Menunggu Pemeriksaan</div>
+
+                <div class="stat-label">
+                    Diajukan
+                </div>
+
                 <div class="stat-icon blue">
                     <i class="fa-regular fa-paper-plane"></i>
                 </div>
+
             </div>
 
-            <div class="stat-value"><?= number_format($diajukan) ?></div>
-            <div class="stat-helper">Status Diajukan</div>
+            <div class="stat-value">
+                <?= number_format($diajukan) ?>
+            </div>
+
+            <div class="stat-helper">
+                Menunggu pemeriksaan
+            </div>
+
         </article>
 
+
+        <!-- DIPROSES -->
+
         <article class="stat-card">
+
             <div class="stat-top">
-                <div class="stat-label">Sedang Diproses</div>
+
+                <div class="stat-label">
+                    Diproses
+                </div>
+
                 <div class="stat-icon amber">
                     <i class="fa-solid fa-spinner"></i>
                 </div>
+
             </div>
 
-            <div class="stat-value"><?= number_format($diproses) ?></div>
-            <div class="stat-helper">Sedang ditangani admin</div>
+            <div class="stat-value">
+                <?= number_format($diproses) ?>
+            </div>
+
+            <div class="stat-helper">
+                Sedang ditangani
+            </div>
+
         </article>
 
+
+        <!-- DITOLAK -->
+
         <article class="stat-card">
+
             <div class="stat-top">
-                <div class="stat-label">Perlu Perbaikan</div>
+
+                <div class="stat-label">
+                    Ditolak
+                </div>
+
                 <div class="stat-icon red">
                     <i class="fa-solid fa-circle-xmark"></i>
                 </div>
+
             </div>
 
-            <div class="stat-value"><?= number_format($ditolak) ?></div>
-            <div class="stat-helper">Permohonan ditolak</div>
+            <div class="stat-value">
+                <?= number_format($ditolak) ?>
+            </div>
+
+            <div class="stat-helper">
+                Perlu perbaikan
+            </div>
+
         </article>
 
+
+        <!-- SELESAI -->
+
         <article class="stat-card">
+
             <div class="stat-top">
-                <div class="stat-label">Selesai / Diambil</div>
+
+                <div class="stat-label">
+                    Selesai
+                </div>
+
                 <div class="stat-icon green">
                     <i class="fa-regular fa-circle-check"></i>
                 </div>
+
             </div>
 
-            <div class="stat-value"><?= number_format($selesaiDiambil) ?></div>
-            <div class="stat-helper"><?= number_format($selesai) ?> selesai · <?= number_format($diambil) ?> diambil</div>
+            <div class="stat-value">
+                <?= number_format($selesai) ?>
+            </div>
+
+            <div class="stat-helper">
+                Dokumen selesai
+            </div>
+
         </article>
+
+
+        <!-- DIAMBIL -->
+
+        <article class="stat-card">
+
+            <div class="stat-top">
+
+                <div class="stat-label">
+                    Diambil
+                </div>
+
+                <div class="stat-icon indigo">
+                    <i class="fa-solid fa-box-open"></i>
+                </div>
+
+            </div>
+
+            <div class="stat-value">
+                <?= number_format($diambil) ?>
+            </div>
+
+            <div class="stat-helper">
+                Sudah diambil
+            </div>
+
+        </article>
+
+
+        <!-- MENUNGGU VERIFIKASI -->
+
+        <article class="stat-card">
+
+            <div class="stat-top">
+
+                <div class="stat-label">
+                    Menunggu Verifikasi
+                </div>
+
+                <div class="stat-icon blue">
+                    <i class="fa-solid fa-clock"></i>
+                </div>
+
+            </div>
+
+            <div class="stat-value">
+                <?= number_format($menungguPengambilan) ?>
+            </div>
+
+            <div class="stat-helper">
+                Bukti pengambilan
+            </div>
+
+        </article>
+
 
     </section>
 
-    <!-- MAIN CONTENT -->
+
+    <!-- =========================================
+         MAIN CONTENT
+    ========================================== -->
+
     <div class="dashboard-grid">
 
-        <!-- RECENT REQUESTS -->
+
+        <!-- =====================================
+             RECENT REQUESTS
+        ====================================== -->
+
         <section class="panel">
 
+
             <div class="panel-head">
+
                 <div class="panel-heading">
-                    <div class="panel-kicker">Aktivitas</div>
-                    <div class="panel-title">Permohonan Terbaru</div>
+
+                    <div class="panel-kicker">
+                        Aktivitas
+                    </div>
+
+                    <div class="panel-title">
+                        Permohonan Terbaru
+                    </div>
+
                     <div class="panel-subtitle">
                         Lima pengajuan terakhir yang masuk ke sistem.
                     </div>
+
                 </div>
+
 
                 <a
                     href="<?= site_url('admin/permohonan') ?>"
@@ -883,250 +1648,1026 @@ function adminFormatDate(?string $date): string
                     Lihat semua
                     <i class="fa-solid fa-arrow-right"></i>
                 </a>
+
             </div>
+
 
             <?php if (empty($aktivitas)): ?>
 
                 <div class="empty-table">
+
                     <div class="empty-table-icon">
                         <i class="fa-regular fa-folder-open"></i>
                     </div>
 
-                    <strong>Belum ada permohonan</strong>
+                    <strong>
+                        Belum ada permohonan
+                    </strong>
 
                     <p>
                         Pengajuan mahasiswa akan tampil di sini.
                     </p>
+
                 </div>
 
             <?php else: ?>
 
                 <div class="table-wrap">
+
                     <table class="requests-table">
+
                         <thead>
+
                             <tr>
-                                <th>Permohonan</th>
-                                <th>Mahasiswa</th>
-                                <th>Tujuan</th>
-                                <th>Tanggal</th>
-                                <th>Status</th>
+
+                                <th>
+                                    Permohonan
+                                </th>
+
+                                <th>
+                                    Mahasiswa
+                                </th>
+
+                                <th>
+                                    Tujuan
+                                </th>
+
+                                <th>
+                                    Tanggal
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
                                 <th></th>
+
                             </tr>
+
                         </thead>
+
 
                         <tbody>
 
-                        <?php foreach ($aktivitas as $item): ?>
+                            <?php foreach ($aktivitas as $item): ?>
 
-                            <?php
-                            $id = (int) ($item['id_permohonan'] ?? 0);
-                            $status = strtoupper((string) ($item['nama_status'] ?? ''));
+                                <?php
 
-                            $meta = $statusMeta[$status] ?? [
-                                'label' => ucwords(strtolower($status ?: 'Status')),
-                                'class' => 'status-diambil',
-                                'icon' => 'fa-regular fa-circle-dot',
-                            ];
+                                $id = (int) (
+                                    $item['id_permohonan'] ?? 0
+                                );
 
-                            $namaMahasiswa = trim((string) ($item['nama_lengkap'] ?? '-'));
-                            $nim = trim((string) ($item['nim'] ?? '-'));
-                            $initial = strtoupper(substr($namaMahasiswa !== '-' ? $namaMahasiswa : 'M', 0, 1));
-                            ?>
+                                $status = strtoupper(
+                                    (string) (
+                                        $item['nama_status'] ?? ''
+                                    )
+                                );
 
-                            <tr>
+                                $meta = $statusMeta[$status] ?? [
+                                    'label' => ucwords(
+                                        strtolower(
+                                            $status ?: 'Status'
+                                        )
+                                    ),
+                                    'class' => 'status-diambil',
+                                    'icon' =>
+                                        'fa-regular fa-circle-dot',
+                                ];
 
-                                <td>
-                                    <div class="request-id">
-                                        #REQ-<?= str_pad((string) $id, 4, '0', STR_PAD_LEFT) ?>
-                                    </div>
-                                </td>
+                                $namaMahasiswa = trim(
+                                    (string) (
+                                        $item['nama_lengkap'] ?? '-'
+                                    )
+                                );
 
-                                <td>
-                                    <div class="student-cell">
-                                        <div class="student-mini-avatar">
-                                            <?= esc($initial) ?>
+                                $nim = trim(
+                                    (string) (
+                                        $item['nim'] ?? '-'
+                                    )
+                                );
+
+                                $initial = strtoupper(
+                                    substr(
+                                        $namaMahasiswa !== '-'
+                                            ? $namaMahasiswa
+                                            : 'M',
+                                        0,
+                                        1
+                                    )
+                                );
+
+                                ?>
+
+                                <tr>
+
+                                    <td>
+
+                                        <div class="request-id">
+
+                                            #REQ-
+                                            <?= str_pad(
+                                                (string) $id,
+                                                4,
+                                                '0',
+                                                STR_PAD_LEFT
+                                            ) ?>
+
                                         </div>
 
-                                        <div class="student-name">
-                                            <strong><?= esc($namaMahasiswa) ?></strong>
-                                            <span><?= esc($nim) ?></span>
+                                    </td>
+
+
+                                    <td>
+
+                                        <div class="student-cell">
+
+                                            <div class="student-mini-avatar">
+                                                <?= esc($initial) ?>
+                                            </div>
+
+                                            <div class="student-name">
+
+                                                <strong>
+                                                    <?= esc(
+                                                        $namaMahasiswa
+                                                    ) ?>
+                                                </strong>
+
+                                                <span>
+                                                    <?= esc($nim) ?>
+                                                </span>
+
+                                            </div>
+
                                         </div>
-                                    </div>
-                                </td>
 
-                                <td>
-                                    <div class="destination-cell">
-                                        <?= esc($item['nama_tujuan'] ?? '-') ?>
-                                    </div>
-                                </td>
+                                    </td>
 
-                                <td>
-                                    <div class="date-cell">
-                                        <?= esc(adminFormatDate($item['tanggal_pengajuan'] ?? null)) ?>
-                                    </div>
-                                </td>
 
-                                <td>
-                                    <span class="status-pill <?= esc($meta['class']) ?>">
-                                        <i class="<?= esc($meta['icon']) ?>"></i>
-                                        <?= esc($meta['label']) ?>
-                                    </span>
-                                </td>
+                                    <td>
 
-                                <td>
-                                    <a
-                                        href="<?= site_url('admin/permohonan/' . $id) ?>"
-                                        class="detail-btn"
-                                    >
-                                        Detail
-                                        <i class="fa-solid fa-arrow-right"></i>
-                                    </a>
-                                </td>
+                                        <div class="destination-cell">
 
-                            </tr>
+                                            <?= esc(
+                                                $item['nama_tujuan'] ?? '-'
+                                            ) ?>
 
-                        <?php endforeach; ?>
+                                        </div>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <div class="date-cell">
+
+                                            <?= esc(
+                                                adminFormatDate(
+                                                    $item[
+                                                        'tanggal_pengajuan'
+                                                    ] ?? null
+                                                )
+                                            ) ?>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span
+                                            class="status-pill
+                                            <?= esc(
+                                                $meta['class']
+                                            ) ?>"
+                                        >
+
+                                            <i
+                                                class="<?= esc(
+                                                    $meta['icon']
+                                                ) ?>"
+                                            ></i>
+
+                                            <?= esc(
+                                                $meta['label']
+                                            ) ?>
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <a
+                                            href="<?= site_url(
+                                                'admin/permohonan/'
+                                                . $id
+                                            ) ?>"
+                                            class="detail-btn"
+                                        >
+
+                                            Detail
+
+                                            <i
+                                                class="fa-solid
+                                                fa-arrow-right"
+                                            ></i>
+
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                            <?php endforeach; ?>
 
                         </tbody>
+
                     </table>
+
                 </div>
 
             <?php endif; ?>
 
-        </section>
 
-        <!-- SUMMARY -->
-        <aside>
+            <!-- =================================
+                 PERLU PERHATIAN
+            ================================== -->
 
-            <section class="panel">
+            <section class="panel attention-panel">
+
 
                 <div class="panel-head">
+
                     <div class="panel-heading">
-                        <div class="panel-kicker">Ringkasan</div>
-                        <div class="panel-title">Distribusi Status</div>
-                        <div class="panel-subtitle">
-                            Kondisi seluruh permohonan saat ini.
+
+                        <div class="panel-kicker">
+                            Tindakan
                         </div>
-                    </div>
-                </div>
 
-                <div class="summary-list">
+                        <div class="panel-title">
+                            Permohonan Perlu Perhatian
+                        </div>
 
-                    <div class="summary-item">
-                        <span class="summary-dot blue"></span>
-                        <span class="summary-label">Diajukan</span>
-                        <strong class="summary-value"><?= number_format($diajukan) ?></strong>
-                    </div>
+                        <div class="panel-subtitle">
+                            Pengajuan yang membutuhkan tindakan admin.
+                        </div>
 
-                    <div class="summary-item">
-                        <span class="summary-dot amber"></span>
-                        <span class="summary-label">Diproses</span>
-                        <strong class="summary-value"><?= number_format($diproses) ?></strong>
                     </div>
 
-                    <div class="summary-item">
-                        <span class="summary-dot red"></span>
-                        <span class="summary-label">Ditolak</span>
-                        <strong class="summary-value"><?= number_format($ditolak) ?></strong>
-                    </div>
 
-                    <div class="summary-item">
-                        <span class="summary-dot green"></span>
-                        <span class="summary-label">Selesai</span>
-                        <strong class="summary-value"><?= number_format($selesai) ?></strong>
-                    </div>
+                    <a
+                        href="<?= site_url(
+                            'admin/permohonan'
+                        ) ?>"
+                        class="panel-link"
+                    >
 
-                    <div class="summary-item">
-                        <span class="summary-dot gray"></span>
-                        <span class="summary-label">Diambil</span>
-                        <strong class="summary-value"><?= number_format($diambil) ?></strong>
-                    </div>
+                        Lihat semua
+
+                        <i
+                            class="fa-solid fa-arrow-right"
+                        ></i>
+
+                    </a>
 
                 </div>
 
-                <?php
-                $completionBase = $total > 0 ? $total : 1;
-                $completionPercent = $total > 0
-                    ? min(100, round(($selesaiDiambil / $completionBase) * 100))
-                    : 0;
-                ?>
 
-                <div class="completion-box">
+                <?php if (empty($perluPerhatian)): ?>
 
-                    <div class="completion-top">
-                        <strong>Tingkat penyelesaian</strong>
-                        <span><?= $completionPercent ?>%</span>
+                    <div class="attention-empty">
+
+                        <div class="attention-empty-icon">
+
+                            <i
+                                class="fa-regular
+                                fa-circle-check"
+                            ></i>
+
+                        </div>
+
+                        <strong>
+                            Tidak ada permohonan yang perlu ditindaklanjuti
+                        </strong>
+
+                        <p>
+                            Semua permohonan saat ini tidak memerlukan
+                            tindakan segera.
+                        </p>
+
                     </div>
 
-                    <div class="progress-track">
-                        <div
-                            class="progress-fill"
-                            style="width: <?= $completionPercent ?>%;"
-                        ></div>
+                <?php else: ?>
+
+                    <div class="attention-list">
+
+                        <?php foreach (
+                            $perluPerhatian as $item
+                        ): ?>
+
+                            <?php
+
+                            $attentionId = (int) (
+                                $item['id_permohonan'] ?? 0
+                            );
+
+                            $attentionStatus = strtoupper(
+                                (string) (
+                                    $item['nama_status'] ?? ''
+                                )
+                            );
+
+                            $attentionMeta =
+                                $statusMeta[
+                                    $attentionStatus
+                                ] ?? [
+                                    'label' => 'Status',
+                                    'class' =>
+                                        'status-diproses',
+                                    'icon' =>
+                                        'fa-solid fa-clock',
+                                ];
+
+                            $attentionName = trim(
+                                (string) (
+                                    $item['nama_lengkap'] ?? '-'
+                                )
+                            );
+
+                            $attentionDestination = trim(
+                                (string) (
+                                    $item['nama_tujuan'] ?? '-'
+                                )
+                            );
+
+                            ?>
+
+                            <a
+                                href="<?= site_url(
+                                    'admin/permohonan/'
+                                    . $attentionId
+                                ) ?>"
+                                class="attention-item"
+                            >
+
+                                <div class="attention-icon">
+
+                                    <i
+                                        class="<?= esc(
+                                            $attentionMeta['icon']
+                                        ) ?>"
+                                    ></i>
+
+                                </div>
+
+
+                                <div class="attention-content">
+
+
+                                    <div class="attention-top">
+
+                                        <div class="attention-id">
+
+                                            #REQ-
+                                            <?= str_pad(
+                                                (string) $attentionId,
+                                                4,
+                                                '0',
+                                                STR_PAD_LEFT
+                                            ) ?>
+
+                                        </div>
+
+
+                                        <span
+                                            class="status-pill
+                                            <?= esc(
+                                                $attentionMeta[
+                                                    'class'
+                                                ]
+                                            ) ?>"
+                                        >
+
+                                            <?= esc(
+                                                $attentionMeta[
+                                                    'label'
+                                                ]
+                                            ) ?>
+
+                                        </span>
+
+                                    </div>
+
+
+                                    <div class="attention-name">
+
+                                        <?= esc(
+                                            $attentionName
+                                        ) ?>
+
+                                    </div>
+
+
+                                    <div class="attention-meta">
+
+                                        <?= esc(
+                                            $attentionDestination
+                                        ) ?>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="attention-arrow">
+
+                                    <i
+                                        class="fa-solid
+                                        fa-chevron-right"
+                                    ></i>
+
+                                </div>
+
+                            </a>
+
+                        <?php endforeach; ?>
+
                     </div>
 
-                    <div class="completion-note">
-                        <?= number_format($selesaiDiambil) ?> dari <?= number_format($total) ?>
-                        permohonan sudah mencapai tahap selesai atau telah diambil.
-                    </div>
-
-                </div>
+                <?php endif; ?>
 
             </section>
 
-            <!-- QUICK ACCESS -->
+
+        </section>
+
+
+
+        <!-- =====================================
+             SUMMARY
+        ====================================== -->
+
+        <aside>
+
+
+            <section class="panel">
+
+
+                <div class="panel-head">
+
+                    <div class="panel-heading">
+
+                        <div class="panel-kicker">
+                            Ringkasan
+                        </div>
+
+                        <div class="panel-title">
+                            Distribusi Status
+                        </div>
+
+                        <div class="panel-subtitle">
+                            Kondisi seluruh permohonan saat ini.
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- DISTRIBUTION -->
+
+                <div class="distribution-body">
+
+
+                    <!-- DONUT -->
+
+                    <div class="distribution-chart">
+
+                        <div class="chart-wrap">
+
+                            <canvas
+                                id="statusDistributionChart"
+                            ></canvas>
+
+                            <div class="chart-center">
+
+                                <strong>
+                                    <?= number_format($total) ?>
+                                </strong>
+
+                                <span>
+                                    Total
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- SUMMARY LIST -->
+
+                    <div class="summary-list">
+
+
+                        <div class="summary-item">
+
+                            <span
+                                class="summary-dot blue"
+                            ></span>
+
+                            <span class="summary-label">
+                                Diajukan
+                            </span>
+
+                            <strong class="summary-value">
+                                <?= number_format(
+                                    $diajukan
+                                ) ?>
+                            </strong>
+
+                        </div>
+
+
+                        <div class="summary-item">
+
+                            <span
+                                class="summary-dot amber"
+                            ></span>
+
+                            <span class="summary-label">
+                                Diproses
+                            </span>
+
+                            <strong class="summary-value">
+                                <?= number_format(
+                                    $diproses
+                                ) ?>
+                            </strong>
+
+                        </div>
+
+
+                        <div class="summary-item">
+
+                            <span
+                                class="summary-dot red"
+                            ></span>
+
+                            <span class="summary-label">
+                                Ditolak
+                            </span>
+
+                            <strong class="summary-value">
+                                <?= number_format(
+                                    $ditolak
+                                ) ?>
+                            </strong>
+
+                        </div>
+
+
+                        <div class="summary-item">
+
+                            <span
+                                class="summary-dot green"
+                            ></span>
+
+                            <span class="summary-label">
+                                Selesai
+                            </span>
+
+                            <strong class="summary-value">
+                                <?= number_format(
+                                    $selesai
+                                ) ?>
+                            </strong>
+
+                        </div>
+
+
+                        <div class="summary-item">
+
+                            <span
+                                class="summary-dot gray"
+                            ></span>
+
+                            <span class="summary-label">
+                                Diambil
+                            </span>
+
+                            <strong class="summary-value">
+                                <?= number_format(
+                                    $diambil
+                                ) ?>
+                            </strong>
+
+                        </div>
+
+
+                        <div class="summary-item">
+
+                            <span
+                                class="summary-dot amber"
+                            ></span>
+
+                            <span class="summary-label">
+                                Menunggu Verifikasi
+                            </span>
+
+                            <strong class="summary-value">
+                                <?= number_format(
+                                    $menungguPengambilan
+                                ) ?>
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+                <?php
+
+                $completionBase =
+                    $total > 0
+                    ? $total
+                    : 1;
+
+                $completionPercent =
+                    $total > 0
+
+                        ? min(
+                            100,
+                            round(
+                                (
+                                    $selesaiDiambil
+                                    / $completionBase
+                                ) * 100
+                            )
+                        )
+
+                        : 0;
+
+                ?>
+
+
+                <!-- COMPLETION -->
+
+                <div class="completion-box">
+
+
+                    <div class="completion-top">
+
+                        <strong>
+                            Tingkat penyelesaian
+                        </strong>
+
+                        <span>
+                            <?= $completionPercent ?>%
+                        </span>
+
+                    </div>
+
+
+                    <div class="progress-track">
+
+                        <div
+                            class="progress-fill"
+                            style="
+                                width:
+                                <?= $completionPercent ?>%;
+                            "
+                        ></div>
+
+                    </div>
+
+
+                    <div class="completion-note">
+
+                        <?= number_format(
+                            $selesaiDiambil
+                        ) ?>
+
+                        dari
+
+                        <?= number_format(
+                            $total
+                        ) ?>
+
+                        permohonan sudah mencapai tahap
+                        selesai atau telah diambil.
+
+                    </div>
+
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- =================================
+                 QUICK ACCESS
+            ================================== -->
+
             <section class="panel quick-actions">
+
 
                 <div class="quick-actions-title">
                     Akses Cepat
                 </div>
 
+
                 <div class="action-grid">
 
-                    <a
-                        href="<?= site_url('admin/permohonan?status=1') ?>"
-                        class="action-card"
-                    >
-                        <div class="action-icon">
-                            <i class="fa-regular fa-paper-plane"></i>
-                        </div>
 
-                        <strong>Periksa Pengajuan</strong>
-                        <span><?= number_format($diajukan) ?> menunggu pemeriksaan</span>
-                    </a>
+                    <!-- PERIKSA PENGAJUAN -->
 
                     <a
-                        href="<?= site_url('admin/permohonan?status=2') ?>"
+                        href="<?= site_url(
+                            'admin/permohonan?status=1'
+                        ) ?>"
                         class="action-card"
                     >
+
                         <div class="action-icon">
-                            <i class="fa-solid fa-spinner"></i>
+
+                            <i
+                                class="fa-regular
+                                fa-paper-plane"
+                            ></i>
+
                         </div>
 
-                        <strong>Pantau Proses</strong>
-                        <span><?= number_format($diproses) ?> sedang diproses</span>
+                        <strong>
+                            Periksa Pengajuan
+                        </strong>
+
+                        <span>
+
+                            <?= number_format(
+                                $diajukan
+                            ) ?>
+
+                            menunggu pemeriksaan
+
+                        </span>
+
                     </a>
+
+
+                    <!-- PANTAU PROSES -->
 
                     <a
-                        href="<?= site_url('admin/laporan') ?>"
+                        href="<?= site_url(
+                            'admin/permohonan?status=2'
+                        ) ?>"
                         class="action-card"
                     >
+
                         <div class="action-icon">
-                            <i class="fa-solid fa-chart-column"></i>
+
+                            <i
+                                class="fa-solid fa-spinner"
+                            ></i>
+
                         </div>
 
-                        <strong>Buka Laporan</strong>
-                        <span>Lihat statistik dan tren permohonan</span>
+                        <strong>
+                            Pantau Proses
+                        </strong>
+
+                        <span>
+
+                            <?= number_format(
+                                $diproses
+                            ) ?>
+
+                            sedang diproses
+
+                        </span>
+
                     </a>
+
+
+                    <!-- VERIFIKASI PENGAMBILAN -->
+
+                    <a
+                        href="<?= site_url(
+                            'admin/permohonan?status='
+                            . ($pendingPickupStatusId ?? '')
+                        ) ?>"
+                        class="action-card"
+                    >
+
+                        <div class="action-icon">
+
+                            <i
+                                class="fa-solid fa-clock"
+                            ></i>
+
+                        </div>
+
+                        <strong>
+                            Verifikasi Pengambilan
+                        </strong>
+
+                        <span>
+
+                            <?= number_format(
+                                $menungguPengambilan
+                            ) ?>
+
+                            menunggu verifikasi
+
+                        </span>
+
+                    </a>
+
+
+                    <!-- BUKA LAPORAN -->
+
+                    <a
+                        href="<?= site_url(
+                            'admin/laporan'
+                        ) ?>"
+                        class="action-card"
+                    >
+
+                        <div class="action-icon">
+
+                            <i
+                                class="fa-solid
+                                fa-chart-column"
+                            ></i>
+
+                        </div>
+
+                        <strong>
+                            Buka Laporan
+                        </strong>
+
+                        <span>
+                            Lihat statistik dan tren permohonan
+                        </span>
+
+                    </a>
+
 
                 </div>
 
+
             </section>
+
 
         </aside>
 
+
     </div>
 
+
 </div>
+
+
+<?= $this->endSection() ?>
+
+
+
+<?= $this->section('scripts') ?>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+document.addEventListener(
+    'DOMContentLoaded',
+    function () {
+
+        const canvas =
+            document.getElementById(
+                'statusDistributionChart'
+            );
+
+
+        if (!canvas) {
+            return;
+        }
+
+
+        new Chart(
+            canvas,
+            {
+
+                type: 'doughnut',
+
+                data: {
+
+                    labels: [
+                        'Diajukan',
+                        'Diproses',
+                        'Ditolak',
+                        'Selesai',
+                        'Diambil',
+                        'Menunggu Verifikasi'
+                    ],
+
+                    datasets: [
+
+                        {
+
+                            data: [
+                                <?= $diajukan ?>,
+                                <?= $diproses ?>,
+                                <?= $ditolak ?>,
+                                <?= $selesai ?>,
+                                <?= $diambil ?>,
+                                <?= $menungguPengambilan ?>
+                            ],
+
+                            backgroundColor: [
+                                '#3182f6',
+                                '#f59e0b',
+                                '#ef4444',
+                                '#10b981',
+                                '#8b8da3',
+                                '#f97316'
+                            ],
+
+                            borderWidth: 0,
+
+                            hoverOffset: 5
+
+                        }
+
+                    ]
+
+                },
+
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    cutout: '70%',
+
+
+                    plugins: {
+
+                        legend: {
+                            display: false
+                        },
+
+                        tooltip: {
+
+                            backgroundColor: '#142e52',
+
+                            padding: 10,
+
+                            titleFont: {
+
+                                size: 10,
+                                weight: '700'
+
+                            },
+
+                            bodyFont: {
+                                size: 10
+                            },
+
+                            displayColors: true
+
+                        }
+
+                    },
+
+
+                    animation: {
+
+                        duration: 700,
+
+                        easing: 'easeOutQuart'
+
+                    }
+
+                }
+
+            }
+        );
+
+    }
+);
+
+</script>
 
 <?= $this->endSection() ?>

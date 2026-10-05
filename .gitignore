@@ -124,3 +124,10 @@ _modules/*
 
 /results/
 /phpunit.xml
+
+# User uploaded files
+/public/uploads/
+
+# OAuth / Google credentials
+client_secret*.json
+credentials*.json

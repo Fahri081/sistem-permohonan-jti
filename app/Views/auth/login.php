@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,13 +8,16 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <style>
         :root {
             --navy: #142E52;
+            --navy-dark: #0D2038;
             --blue: #2563EB;
+            --blue-dark: #1D4ED8;
             --indigo: #4F46E5;
             --soft-blue: #EAF1FF;
             --bg: #F4F7FC;
@@ -24,9 +28,12 @@
             --success: #059669;
         }
 
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
-        html, body {
+        html,
+        body {
             min-height: 100%;
             margin: 0;
         }
@@ -36,8 +43,8 @@
             font-family: "Plus Jakarta Sans", Arial, sans-serif;
             color: var(--text);
             background:
-                radial-gradient(circle at 10% 15%, rgba(37,99,235,.10), transparent 28%),
-                radial-gradient(circle at 90% 85%, rgba(79,70,229,.10), transparent 30%),
+                radial-gradient(circle at 10% 15%, rgba(37, 99, 235, .10), transparent 28%),
+                radial-gradient(circle at 90% 85%, rgba(79, 70, 229, .10), transparent 30%),
                 var(--bg);
         }
 
@@ -54,10 +61,10 @@
             display: grid;
             grid-template-columns: 1.02fr .98fr;
             overflow: hidden;
-            border: 1px solid rgba(226,232,240,.95);
+            border: 1px solid rgba(226, 232, 240, .95);
             border-radius: 28px;
-            background: rgba(255,255,255,.96);
-            box-shadow: 0 28px 70px rgba(20,46,82,.14);
+            background: rgba(255, 255, 255, .96);
+            box-shadow: 0 28px 70px rgba(20, 46, 82, .14);
         }
 
         .brand-side {
@@ -66,7 +73,7 @@
             overflow: hidden;
             color: #fff;
             background:
-                linear-gradient(145deg, rgba(20,46,82,.97), rgba(37,99,235,.94) 58%, rgba(79,70,229,.92));
+                linear-gradient(145deg, #142E52 0%, #2563EB 58%, #4F46E5 100%);
         }
 
         .brand-side::before,
@@ -74,7 +81,7 @@
             content: "";
             position: absolute;
             border-radius: 50%;
-            background: rgba(255,255,255,.08);
+            background: rgba(255, 255, 255, .08);
         }
 
         .brand-side::before {
@@ -112,8 +119,8 @@
             display: grid;
             place-items: center;
             border-radius: 14px;
-            background: rgba(255,255,255,.14);
-            border: 1px solid rgba(255,255,255,.18);
+            background: rgba(255, 255, 255, .14);
+            border: 1px solid rgba(255, 255, 255, .18);
             font-size: 13px;
             font-weight: 800;
             letter-spacing: .04em;
@@ -134,7 +141,7 @@
             display: block;
             margin-top: 3px;
             font-size: 11px;
-            color: rgba(255,255,255,.72);
+            color: rgba(255, 255, 255, .72);
         }
 
         .brand-copy {
@@ -150,10 +157,10 @@
             gap: 8px;
             margin-bottom: 18px;
             padding: 8px 12px;
-            border: 1px solid rgba(255,255,255,.18);
+            border: 1px solid rgba(255, 255, 255, .18);
             border-radius: 999px;
-            background: rgba(255,255,255,.09);
-            color: rgba(255,255,255,.85);
+            background: rgba(255, 255, 255, .09);
+            color: rgba(255, 255, 255, .85);
             font-size: 11px;
             font-weight: 700;
             backdrop-filter: blur(8px);
@@ -169,7 +176,7 @@
         .brand-copy p {
             margin: 18px 0 0;
             max-width: 440px;
-            color: rgba(255,255,255,.78);
+            color: rgba(255, 255, 255, .78);
             font-size: 14px;
             line-height: 1.75;
         }
@@ -184,7 +191,7 @@
             display: flex;
             align-items: center;
             gap: 11px;
-            color: rgba(255,255,255,.88);
+            color: rgba(255, 255, 255, .88);
             font-size: 12px;
         }
 
@@ -194,14 +201,14 @@
             display: grid;
             place-items: center;
             border-radius: 9px;
-            background: rgba(255,255,255,.12);
+            background: rgba(255, 255, 255, .12);
             font-size: 11px;
         }
 
         .brand-footer {
             position: relative;
             z-index: 1;
-            color: rgba(255,255,255,.56);
+            color: rgba(255, 255, 255, .56);
             font-size: 10px;
             line-height: 1.6;
         }
@@ -317,7 +324,7 @@
         .field input:focus {
             background: #fff;
             border-color: #8BAAF4;
-            box-shadow: 0 0 0 4px rgba(37,99,235,.08);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, .08);
         }
 
         .password-button {
@@ -350,13 +357,44 @@
             font-size: 12px;
             font-weight: 800;
             cursor: pointer;
-            box-shadow: 0 10px 20px rgba(37,99,235,.18);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, .18);
             transition: .2s ease;
         }
 
         .login-button:hover {
             transform: translateY(-1px);
-            box-shadow: 0 14px 24px rgba(37,99,235,.23);
+            box-shadow: 0 14px 24px rgba(37, 99, 235, .23);
+        }
+
+        .google-button {
+            width: 100%;
+            height: 50px;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: 1px solid #D8E0EB;
+            border-radius: 13px;
+            background: #fff;
+            color: #344054;
+            text-decoration: none;
+            font: inherit;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: .2s ease;
+        }
+
+        .google-button i {
+            font-size: 15px;
+        }
+
+        .google-button:hover {
+            background: #F8FAFD;
+            border-color: #B8C5D8;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 18px rgba(16, 24, 40, .08);
         }
 
         .divider {
@@ -428,213 +466,256 @@
         }
 
         @media (max-width: 900px) {
-            .page { padding: 15px; }
+            .page {
+                padding: 15px;
+            }
+
             .shell {
                 min-height: calc(100vh - 30px);
                 grid-template-columns: 1fr;
             }
-            .brand-side { min-height: 330px; padding: 30px; }
-            .brand-copy { padding: 40px 0 25px; }
-            .brand-copy h1 { font-size: 38px; }
-            .form-side { padding: 38px 28px; }
+
+            .brand-side {
+                min-height: 330px;
+                padding: 30px;
+            }
+
+            .brand-copy {
+                padding: 40px 0 25px;
+            }
+
+            .brand-copy h1 {
+                font-size: 38px;
+            }
+
+            .form-side {
+                padding: 38px 28px;
+            }
         }
 
         @media (max-width: 520px) {
-            .brand-side { min-height: 290px; padding: 24px; }
-            .brand-copy { padding: 28px 0 18px; }
-            .brand-copy p, .feature-list { display: none; }
-            .brand-footer { display: none; }
-            .form-side { padding: 30px 20px; }
-            .form-top h2 { font-size: 27px; }
+            .brand-side {
+                min-height: 290px;
+                padding: 24px;
+            }
+
+            .brand-copy {
+                padding: 28px 0 18px;
+            }
+
+            .brand-copy p,
+            .feature-list {
+                display: none;
+            }
+
+            .brand-footer {
+                display: none;
+            }
+
+            .form-side {
+                padding: 30px 20px;
+            }
+
+            .form-top h2 {
+                font-size: 27px;
+            }
+        }
+
+        .register-link {
+            margin-top: 16px;
+            text-align: center;
+            color: #98A2B3;
+            font-size: 10px;
+        }
+
+        .register-link a {
+            color: var(--blue);
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
         }
     </style>
+
+    <link rel="stylesheet" href="<?= base_url('assets/css/mobile-responsive.css') ?>">
 </head>
 
 <body>
-<div class="page">
-    <main class="shell">
+    <div class="page">
+        <main class="shell">
 
-        <section class="brand-side">
-            <div class="brand-content">
-                <div class="brand">
-                    <div class="brand-mark">JTI</div>
-                    <div class="brand-name">
-                        <strong>JTI Signature</strong>
-                        <span>Academic Services Portal</span>
-                    </div>
-                </div>
-
-                <div class="brand-copy">
-                    <div class="eyebrow">
-                        <i class="fa-solid fa-shield-halved"></i>
-                        Portal Akademik Terintegrasi
-                    </div>
-
-                    <h1>Layanan akademik, lebih sederhana.</h1>
-
-                    <p>
-                        Akses layanan permohonan tanda tangan dan administrasi
-                        Jurusan Teknologi Informasi dalam satu sistem yang rapi,
-                        cepat, dan mudah dipantau.
-                    </p>
-
-                    <div class="feature-list">
-                        <div class="feature">
-                            <i class="fa-solid fa-paper-plane"></i>
-                            <span>Ajukan permohonan secara online</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fa-solid fa-timeline"></i>
-                            <span>Pantau perkembangan permohonan</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fa-regular fa-image"></i>
-                            <span>Simpan bukti pengumpulan berkas fisik</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="brand-footer">
-                    Sistem Tanda Tangan & Permohonan Akademik<br>
-                    Jurusan Teknologi Informasi
-                </div>
-            </div>
-        </section>
-
-        <section class="form-side">
-            <div class="form-wrap">
-
-                <div class="form-top">
-                    <div class="form-kicker">Selamat Datang</div>
-                    <h2>Masuk ke akun Anda</h2>
-                    <p>
-                        Gunakan NIM atau email dan password untuk melanjutkan
-                        ke JTI Signature.
-                    </p>
-                </div>
-
-                <?php if (session()->getFlashdata('error')): ?>
-                    <div class="alert alert-error">
-                        <i class="fa-solid fa-circle-exclamation"></i>
-                        <div><?= esc(session()->getFlashdata('error')) ?></div>
-                    </div>
-                <?php endif; ?>
-
-                <?php if (session()->getFlashdata('success')): ?>
-                    <div class="alert alert-success">
-                        <i class="fa-solid fa-circle-check"></i>
-                        <div><?= esc(session()->getFlashdata('success')) ?></div>
-                    </div>
-                <?php endif; ?>
-
-                <form action="<?= site_url('login') ?>" method="post">
-                    <?= csrf_field() ?>
-
-                    <div class="field">
-                        <label class="field-label" for="email">NIM / Email</label>
-                        <div class="field-box">
-                            <i class="fa-regular fa-user field-icon"></i>
-                            <input
-                                type="text"
-                                id="email"
-                                name="email"
-                                placeholder="Masukkan NIM atau email"
-                                autocomplete="username"
-                                required
-                            >
+            <section class="brand-side">
+                <div class="brand-content">
+                    <div class="brand">
+                        <div class="brand-mark">JTI</div>
+                        <div class="brand-name">
+                            <strong>JTI Signature</strong>
+                            <span>Academic Services Portal</span>
                         </div>
                     </div>
 
-                    <div class="field">
-                        <label class="field-label" for="password">Password</label>
-                        <div class="field-box">
-                            <i class="fa-solid fa-lock field-icon"></i>
-                            <input
-                                type="password"
-                                id="password"
-                                name="password"
-                                placeholder="Masukkan password"
-                                autocomplete="current-password"
-                                required
-                            >
-                            <button
-                                type="button"
-                                class="password-button"
-                                onclick="togglePassword()"
-                                aria-label="Tampilkan password"
-                            >
-                                <i id="passwordIcon" class="fa-regular fa-eye"></i>
+                    <div class="brand-copy">
+                        <div class="eyebrow">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            Portal Akademik Terintegrasi
+                        </div>
+
+                        <h1>Layanan akademik, lebih sederhana.</h1>
+
+                        <p>
+                            Akses layanan permohonan tanda tangan dan administrasi
+                            Jurusan Teknologi Informasi dalam satu sistem yang rapi,
+                            cepat, dan mudah dipantau.
+                        </p>
+
+                        <div class="feature-list">
+                            <div class="feature">
+                                <i class="fa-solid fa-paper-plane"></i>
+                                <span>Ajukan permohonan secara online</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fa-solid fa-timeline"></i>
+                                <span>Pantau perkembangan permohonan</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fa-regular fa-image"></i>
+                                <span>Simpan bukti pengumpulan berkas fisik</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="brand-footer">
+                        Sistem Tanda Tangan & Permohonan Akademik<br>
+                        Jurusan Teknologi Informasi
+                    </div>
+                </div>
+            </section>
+
+            <section class="form-side">
+                <div class="form-wrap">
+
+                    <div class="form-top">
+                        <div class="form-kicker">Selamat Datang</div>
+                        <h2>Masuk ke akun Anda</h2>
+                        <p>
+                            Gunakan NIM atau email dan password untuk melanjutkan
+                            ke JTI Signature.
+                        </p>
+                    </div>
+
+                    <?php if (session()->getFlashdata('error')): ?>
+                        <div class="alert alert-error">
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                            <div><?= esc(session()->getFlashdata('error')) ?></div>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if (session()->getFlashdata('success')): ?>
+                        <div class="alert alert-success">
+                            <i class="fa-solid fa-circle-check"></i>
+                            <div><?= esc(session()->getFlashdata('success')) ?></div>
+                        </div>
+                    <?php endif; ?>
+
+                    <form action="<?= site_url('login') ?>" method="post">
+                        <?= csrf_field() ?>
+
+                        <div class="field">
+                            <label class="field-label" for="email">NIM / Email</label>
+                            <div class="field-box">
+                                <i class="fa-regular fa-user field-icon"></i>
+                                <input type="text" id="email" name="email" placeholder="Masukkan NIM atau email"
+                                    autocomplete="username" required>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="field-label" for="password">Password</label>
+                            <div class="field-box">
+                                <i class="fa-solid fa-lock field-icon"></i>
+                                <input type="password" id="password" name="password" placeholder="Masukkan password"
+                                    autocomplete="current-password" required>
+                                <button type="button" class="password-button" onclick="togglePassword()"
+                                    aria-label="Tampilkan password">
+                                    <i id="passwordIcon" class="fa-regular fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="login-button">
+                            <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                            &nbsp; Masuk ke Sistem
+                        </button>
+                    </form>
+
+                    <a href="<?= site_url('login/google') ?>" class="google-button">
+                        <i class="fa-brands fa-google"></i>
+                        <span>Masuk dengan Akun Polinema</span>
+                    </a>
+                    <div class="register-link">
+                        Belum punya akun?
+                        <a href="<?= site_url('register') ?>">
+                            Daftar sekarang
+                        </a>
+                    </div>
+
+                    <div class="divider">AKUN DEMO</div>
+
+                    <div class="demo-box">
+                        <div class="demo-title">Untuk pengujian lokal</div>
+                        <div class="demo-buttons">
+                            <button type="button" class="demo-button"
+                                onclick="fillLogin('budi@student.local','budi123')">
+                                <i class="fa-solid fa-user-graduate"></i>
+                                &nbsp; Mahasiswa
+                            </button>
+
+                            <button type="button" class="demo-button" onclick="fillLogin('admin@jti.local','admin123')">
+                                <i class="fa-solid fa-user-shield"></i>
+                                &nbsp; Admin
                             </button>
                         </div>
                     </div>
 
-                    <button type="submit" class="login-button">
-                        <i class="fa-solid fa-arrow-right-to-bracket"></i>
-                        &nbsp; Masuk ke Sistem
-                    </button>
-                </form>
-
-                <div class="divider">AKUN DEMO</div>
-
-                <div class="demo-box">
-                    <div class="demo-title">Untuk pengujian lokal</div>
-                    <div class="demo-buttons">
-                        <button
-                            type="button"
-                            class="demo-button"
-                            onclick="fillLogin('budi@student.local','budi123')"
-                        >
-                            <i class="fa-solid fa-user-graduate"></i>
-                            &nbsp; Mahasiswa
-                        </button>
-
-                        <button
-                            type="button"
-                            class="demo-button"
-                            onclick="fillLogin('admin@jti.local','admin123')"
-                        >
-                            <i class="fa-solid fa-user-shield"></i>
-                            &nbsp; Admin
-                        </button>
+                    <div class="help">
+                        <strong>Butuh bantuan akses?</strong><br>
+                        Hubungi administrator Jurusan Teknologi Informasi.
                     </div>
+
                 </div>
+            </section>
 
-                <div class="help">
-                    <strong>Butuh bantuan akses?</strong><br>
-                    Hubungi administrator Jurusan Teknologi Informasi.
-                </div>
+        </main>
+    </div>
 
-            </div>
-        </section>
+    <script>
+        function togglePassword() {
+            const input = document.getElementById('password');
+            const icon = document.getElementById('passwordIcon');
 
-    </main>
-</div>
+            if (!input || !icon) return;
 
-<script>
-function togglePassword() {
-    const input = document.getElementById('password');
-    const icon = document.getElementById('passwordIcon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
 
-    if (!input || !icon) return;
+        function fillLogin(email, password) {
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
 
-    if (input.type === 'password') {
-        input.type = 'text';
-        icon.classList.remove('fa-eye');
-        icon.classList.add('fa-eye-slash');
-    } else {
-        input.type = 'password';
-        icon.classList.remove('fa-eye-slash');
-        icon.classList.add('fa-eye');
-    }
-}
-
-function fillLogin(email, password) {
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
-
-    if (emailInput) emailInput.value = email;
-    if (passwordInput) passwordInput.value = password;
-}
-</script>
+            if (emailInput) emailInput.value = email;
+            if (passwordInput) passwordInput.value = password;
+        }
+    </script>
 </body>
+
 </html>

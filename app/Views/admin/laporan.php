@@ -6,15 +6,14 @@
     $tanggalMulai = $tanggalMulai ?? date('Y-m-01');
     $tanggalAkhir = $tanggalAkhir ?? date('Y-m-t');
 
-    $total = (int) ($total ?? 0);
-    $statusData = $status ?? [
-        'diajukan' => 0,
-        'diproses' => 0,
-        'ditolak'  => 0,
-        'selesai'  => 0,
-        'diambil'  => 0,
-    ];
-
+$statusData = $status ?? [
+    'diajukan' => 0,
+    'diproses' => 0,
+    'ditolak'  => 0,
+    'selesai'  => 0,
+    'diambil'  => 0,
+    'menunggu_pengambilan' => 0,
+];
     $tujuanData = is_array($tujuan ?? null) ? $tujuan : [];
     $trenData = is_array($tren ?? null) ? $tren : [];
     $bulananData = is_array($bulanan ?? null) ? $bulanan : [];
@@ -24,14 +23,23 @@
         ? round(($selesaiDanDiambil / $total) * 100)
         : 0;
 
-    $labelsStatus = ['Diajukan', 'Diproses', 'Ditolak', 'Selesai', 'Diambil'];
-    $valuesStatus = [
-        (int) ($statusData['diajukan'] ?? 0),
-        (int) ($statusData['diproses'] ?? 0),
-        (int) ($statusData['ditolak'] ?? 0),
-        (int) ($statusData['selesai'] ?? 0),
-        (int) ($statusData['diambil'] ?? 0),
-    ];
+$labelsStatus = [
+    'Diajukan',
+    'Diproses',
+    'Ditolak',
+    'Selesai',
+    'Diambil',
+    'Menunggu Verifikasi Pengambilan'
+];
+
+$valuesStatus = [
+    (int) ($statusData['diajukan'] ?? 0),
+    (int) ($statusData['diproses'] ?? 0),
+    (int) ($statusData['ditolak'] ?? 0),
+    (int) ($statusData['selesai'] ?? 0),
+    (int) ($statusData['diambil'] ?? 0),
+    (int) ($statusData['menunggu_pengambilan'] ?? 0),
+];
 
     $tujuanLabels = [];
     $tujuanValues = [];
@@ -317,6 +325,7 @@
 
     .table-card {
         overflow: hidden;
+        align-self: start;
     }
 
     .table-card-header {
@@ -324,8 +333,15 @@
         border-bottom: 1px solid #EEF2F6;
     }
 
+    .table-scroll {
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+
     .report-table {
         width: 100%;
+        min-width: 850px;
         border-collapse: collapse;
     }
 
@@ -334,6 +350,12 @@
         padding: 13px 18px;
         text-align: left;
         border-bottom: 1px solid #EEF2F6;
+        white-space: nowrap;
+    }
+
+    .report-table th:first-child,
+    .report-table td:first-child {
+        min-width: 125px;
     }
 
     .report-table th {
@@ -417,13 +439,6 @@
             height: 250px;
         }
 
-        .report-table {
-            min-width: 610px;
-        }
-
-        .table-scroll {
-            overflow-x: auto;
-        }
     }
 </style>
 
@@ -568,29 +583,95 @@
             </div>
 
             <div class="table-scroll">
-                <?php if (! empty($bulananData)): ?>
-                    <table class="report-table">
-                        <thead>
-                            <tr>
-                                <th>Periode</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($bulananData as $row): ?>
-                                <tr>
-                                    <td><?= esc($row['bulan'] ?? $row['periode'] ?? '-') ?></td>
-                                    <td><strong><?= number_format((int) ($row['total'] ?? 0)) ?></strong></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                <?php else: ?>
-                    <div class="empty-report">
-                        <i class="fa-regular fa-calendar-xmark"></i>
-                        <div>Belum ada data bulanan untuk periode ini.</div>
-                    </div>
-                <?php endif; ?>
+               <?php if (! empty($bulananData)): ?>
+
+    <table class="report-table">
+
+        <thead>
+            <tr>
+                <th>Periode</th>
+                <th>Total</th>
+                <th>Diajukan</th>
+                <th>Diproses</th>
+                <th>Ditolak</th>
+                <th>Selesai</th>
+                <th>Diambil</th>
+                <th>Menunggu Verifikasi</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            <?php foreach ($bulananData as $row): ?>
+
+                <tr>
+
+                    <td>
+                        <?= esc(
+                            $row['bulan']
+                            ?? $row['periode']
+                            ?? '-'
+                        ) ?>
+                    </td>
+
+                    <td>
+                        <strong>
+                            <?= number_format(
+                                (int) ($row['total'] ?? 0)
+                            ) ?>
+                        </strong>
+                    </td>
+
+                    <td>
+                        <?= number_format(
+                            (int) ($row['diajukan'] ?? 0)
+                        ) ?>
+                    </td>
+
+                    <td>
+                        <?= number_format(
+                            (int) ($row['diproses'] ?? 0)
+                        ) ?>
+                    </td>
+
+                    <td>
+                        <?= number_format(
+                            (int) ($row['ditolak'] ?? 0)
+                        ) ?>
+                    </td>
+
+                    <td>
+                        <?= number_format(
+                            (int) ($row['selesai'] ?? 0)
+                        ) ?>
+                    </td>
+
+                    <td>
+                        <?= number_format(
+                            (int) ($row['diambil'] ?? 0)
+                        ) ?>
+                    </td>
+
+                    <td>
+                        <?= number_format(
+                            (int) ($row['menunggu_pengambilan'] ?? 0)
+                        ) ?>
+                    </td>
+
+                </tr>
+
+            <?php endforeach; ?>
+
+        </tbody>
+
+    </table>
+
+<?php else: ?>
+    <div class="empty-report">
+        <i class="fa-regular fa-calendar-xmark"></i>
+        <div>Belum ada data bulanan untuk periode ini.</div>
+    </div>
+<?php endif; ?>
             </div>
         </article>
     </section>
@@ -644,7 +725,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         '#4F46E5',
                         '#DC2626',
                         '#059669',
-                        '#0F766E'
+                        '#64748B',
+                        '#D97706'
                     ]
                 }]
             },

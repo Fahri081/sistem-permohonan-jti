@@ -1,0 +1,572 @@
+/*
+ * JTI Signature — Responsive Mobile Layer
+ *
+ * This stylesheet is intentionally scoped to small viewports so the
+ * existing desktop UI and business logic remain unchanged.
+ */
+
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+img,
+svg,
+video,
+canvas {
+    max-width: 100%;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+    -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 860px) {
+    /* Keep the mobile drawer inside the actual visible viewport.
+       100vh can be taller than the visible browser area on Android,
+       which can push the last menu item (Logout) below the nav bar. */
+    .sidebar {
+        height: 100dvh;
+        min-height: 0;
+        max-height: 100dvh;
+        padding-bottom: 0;
+    }
+
+    .sidebar-bottom {
+        flex-shrink: 0;
+        padding-bottom: max(16px, env(safe-area-inset-bottom));
+    }
+
+    .logout {
+        margin-bottom: 0;
+    }
+
+    .content,
+    .admin-content {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .content > *,
+    .admin-content > * {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    /* Prevent long text / IDs from forcing page-width overflow. */
+    .content h1,
+    .content h2,
+    .content h3,
+    .content p,
+    .content span,
+    .content a,
+    .admin-content h1,
+    .admin-content h2,
+    .admin-content h3,
+    .admin-content p,
+    .admin-content span,
+    .admin-content a {
+        overflow-wrap: anywhere;
+    }
+
+    /* Student app shell */
+    .dash-hero,
+    .requests-hero,
+    .apply-hero,
+    .detail-header,
+    .profile-top,
+    .profile-body,
+    .settings-card,
+    .setting-card,
+    .form-card,
+    .side-card,
+    .detail-card,
+    .status-timeline-card {
+        max-width: 100%;
+    }
+
+    .dash-content-grid,
+    .apply-layout,
+    .detail-layout-grid {
+        min-width: 0;
+    }
+
+    /* Tables stay usable without causing horizontal page scroll. */
+    .dash-table-wrap,
+    .requests-table-wrap,
+    .table-wrap,
+    .table-scroll,
+    .monthly-table-wrapper,
+    .requests-card .table-wrap,
+    .request-panel .table-wrap {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+
+    .dash-table,
+    .requests-table,
+    .request-table,
+    .report-table,
+    .monthly-table {
+        max-width: none;
+    }
+
+    /* Make dense actions easier to tap. */
+    .btn,
+    .requests-hero-action,
+    .dash-primary-btn,
+    .detail-btn,
+    .request-action,
+    .btn-filter,
+    .btn-reset,
+    .btn-primary-report,
+    .btn-reset-report,
+    .action-link,
+    .admin-save-button,
+    .admin-back {
+        min-height: 42px;
+    }
+
+    .control,
+    .request-input,
+    .request-select,
+    .form-group input,
+    .form-group select,
+    .form-group textarea,
+    .admin-control input,
+    .admin-control select,
+    .admin-control textarea {
+        max-width: 100%;
+    }
+
+    /* Student dashboard */
+    .dash-side-stack {
+        min-width: 0;
+    }
+
+    .dash-section-head {
+        min-width: 0;
+    }
+
+    .dash-section-title-wrap {
+        min-width: 0;
+        flex: 1 1 auto;
+    }
+
+    /* Student request list */
+    .requests-heading,
+    .requests-count,
+    .requests-toolbar,
+    .requests-toolbar > * {
+        min-width: 0;
+    }
+
+    /* Student detail */
+    .detail-header-left,
+    .detail-header-right,
+    .berkas-file-meta,
+    .status-step-content {
+        min-width: 0;
+    }
+
+    .info-item-value,
+    .berkas-file-name,
+    .berkas-file-subtext,
+    .step span,
+    .step strong {
+        overflow-wrap: anywhere;
+    }
+
+    /* Admin shell */
+    .admin-dashboard,
+    .admin-requests-page,
+    .report-page,
+    .admin-detail-page {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .hero-content,
+    .request-panel-title-row,
+    .admin-detail-main-row,
+    .admin-header-top {
+        min-width: 0;
+    }
+
+    .hero-content > *,
+    .request-panel-title-row > *,
+    .admin-detail-main-row > *,
+    .admin-header-top > * {
+        min-width: 0;
+    }
+
+    .student-name,
+    .purpose-title,
+    .req-id,
+    .admin-detail-subtitle,
+    .admin-field-value,
+    .admin-description {
+        overflow-wrap: anywhere;
+    }
+}
+
+@media (max-width: 700px) {
+    /* =========================
+       STUDENT
+       ========================= */
+    .dash-hero,
+    .requests-hero,
+    .apply-hero {
+        margin-bottom: 16px;
+    }
+
+    .dash-hero h1,
+    .requests-hero h1,
+    .apply-hero h1,
+    .detail-title,
+    .profile-page .page-heading h1,
+    .settings-page .page-heading h1 {
+        letter-spacing: -.025em;
+    }
+
+    .dash-section,
+    .dash-summary,
+    .dash-quick,
+    .requests-card,
+    .form-card,
+    .side-card,
+    .detail-card,
+    .status-timeline-card,
+    .profile-card,
+    .settings-card,
+    .setting-card {
+        border-radius: 14px;
+    }
+
+    .dash-table {
+        min-width: 660px;
+    }
+
+    .requests-table {
+        min-width: 720px;
+    }
+
+    .preview-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .apply-layout {
+        gap: 14px;
+    }
+
+    .form-card,
+    .side-card {
+        padding: 18px;
+    }
+
+    .actions {
+        gap: 9px;
+    }
+
+    .actions .btn {
+        width: 100%;
+    }
+
+    .profile-top {
+        gap: 13px;
+    }
+
+    .profile-top > div:last-child {
+        min-width: 0;
+    }
+
+    .profile-body,
+    .profile-top {
+        padding: 18px;
+    }
+
+    /* =========================
+       ADMIN DASHBOARD / LIST
+       ========================= */
+    .dashboard-hero,
+    .admin-requests-hero,
+    .report-hero,
+    .admin-detail-header {
+        border-radius: 15px;
+    }
+
+    .dashboard-hero,
+    .admin-requests-hero,
+    .report-hero {
+        padding: 20px;
+    }
+
+    .hero-content {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .hero-date {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .stats-grid,
+    .request-stats,
+    .report-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .stat-card,
+    .request-stat {
+        min-height: 112px;
+        padding: 14px;
+    }
+
+    .request-panel-head {
+        padding: 16px;
+    }
+
+    .request-panel-title-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .request-count {
+        align-self: flex-start;
+    }
+
+    .request-filters {
+        grid-template-columns: 1fr;
+    }
+
+    .request-filters .filter-actions {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .request-table {
+        min-width: 760px;
+    }
+
+    .report-filter,
+    .filter-form {
+        width: 100%;
+    }
+
+    .main-charts,
+    .secondary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-wrap,
+    .chart-wrap.small {
+        height: 230px;
+    }
+
+    .report-table,
+    .monthly-table {
+        min-width: 590px;
+    }
+
+    .admin-detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-side-column {
+        min-width: 0;
+    }
+
+    .admin-photo-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .admin-card {
+        border-radius: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    /* =========================
+       VERY SMALL PHONES
+       ========================= */
+    .content,
+    .admin-content {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+
+    .dash-hero,
+    .requests-hero,
+    .apply-hero,
+    .dashboard-hero,
+    .admin-requests-hero,
+    .report-hero,
+    .admin-detail-header {
+        padding: 17px 16px;
+    }
+
+    .dash-stats,
+    .stats-grid,
+    .request-stats,
+    .report-summary {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .dash-stat,
+    .stat-card,
+    .request-stat {
+        min-height: 100px;
+        padding: 12px;
+        border-radius: 12px;
+    }
+
+    .dash-stat-value,
+    .stat-value,
+    .request-stat-value {
+        font-size: 21px;
+    }
+
+    .dash-stat-label,
+    .stat-label,
+    .request-stat-label {
+        font-size: 9.5px;
+    }
+
+    .dash-section,
+    .dash-summary,
+    .dash-quick,
+    .requests-card,
+    .form-card,
+    .side-card,
+    .detail-card,
+    .status-timeline-card,
+    .profile-card,
+    .settings-card,
+    .setting-card,
+    .request-panel,
+    .chart-card,
+    .table-card,
+    .admin-card {
+        border-radius: 12px;
+    }
+
+    .dash-table {
+        min-width: 630px;
+    }
+
+    .requests-table,
+    .request-table {
+        min-width: 700px;
+    }
+
+    .preview-grid,
+    .admin-photo-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-card,
+    .side-card,
+    .admin-card {
+        padding: 15px;
+    }
+
+    .btn,
+    .requests-hero-action,
+    .dash-primary-btn,
+    .btn-filter,
+    .btn-reset,
+    .btn-primary-report,
+    .btn-reset-report,
+    .admin-save-button,
+    .admin-back {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .request-filters .filter-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .report-table,
+    .monthly-table {
+        min-width: 540px;
+    }
+
+    .admin-contact-grid,
+    .admin-request-grid,
+    .student-meta {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-photo-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Slightly larger controls reduce accidental taps. */
+    input,
+    select,
+    textarea {
+        font-size: 16px !important;
+    }
+}
+
+@media (max-width: 720px) {
+    /* Login screen: keep one clean column on phones. */
+    .page {
+        padding: 12px;
+    }
+
+    .shell {
+        min-height: auto;
+        grid-template-columns: 1fr;
+        border-radius: 18px;
+    }
+
+    .brand-side {
+        display: none;
+    }
+
+    .form-side {
+        min-height: calc(100vh - 24px);
+        padding: 28px 20px;
+    }
+
+    .form-wrap {
+        width: 100%;
+        max-width: 430px;
+    }
+}
+
+@media (max-width: 420px) {
+    .form-side {
+        padding: 22px 15px;
+    }
+
+    .form-top h2 {
+        font-size: 25px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        scroll-behavior: auto !important;
+        transition: none !important;
+        animation: none !important;
+    }
+}

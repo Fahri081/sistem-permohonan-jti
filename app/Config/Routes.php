@@ -34,10 +34,45 @@ $routes->post(
     'Auth::attempt'
 );
 
+// Tampilkan halaman register lokal
+$routes->get(
+    'register',
+    'Auth::register'
+);
+
+// Proses register lokal
+$routes->post(
+    'register',
+    'Auth::processRegister'
+);
+
+// Form melengkapi register Google
+$routes->get(
+    'register/google',
+    'Auth::googleRegister'
+);
+
+// Proses melengkapi register Google
+$routes->post(
+    'register/google',
+    'Auth::processGoogleRegister'
+);
+
 // Logout
 $routes->get(
     'logout',
     'Auth::logout'
+);
+
+// Login / register dengan akun Google / Polinema
+$routes->get(
+    'login/google',
+    'Auth::google'
+);
+
+$routes->get(
+    'auth/google/callback',
+    'Auth::googleCallback'
 );
 
 
@@ -98,6 +133,12 @@ $routes->group(
             'Mahasiswa::show/$1'
         );
 
+        // Konfirmasi pengambilan + upload bukti pengambilan
+        $routes->post(
+            'permohonan/(:num)/pengambilan',
+            'Mahasiswa::submitBuktiPengambilan/$1'
+        );
+
         // Ubah / Perbaiki Bukti Fisik
         $routes->post(
             'permohonan/(:num)/bukti-fisik',
@@ -121,6 +162,24 @@ $routes->group(
             'profil',
             'Mahasiswa::updateProfil'
         );
+
+        // Update Foto Profil Mahasiswa
+        $routes->post(
+            'profil/foto',
+            'Mahasiswa::updateFotoProfil'
+        );
+
+        // Pengaturan Akun
+        $routes->get(
+            'pengaturan',
+            'Mahasiswa::pengaturan'
+        );
+
+        // Update Password
+        $routes->post(
+            'pengaturan/password',
+            'Mahasiswa::updatePassword'
+        );
     }
 );
 
@@ -133,7 +192,7 @@ $routes->group(
 
 $routes->group(
     'admin',
-    ['filter' => 'role:admin'],
+    ['filter' => 'role:admin,super_admin'],
     static function (RouteCollection $routes) {
 
         // Dashboard Admin
@@ -158,6 +217,12 @@ $routes->group(
         $routes->post(
             'permohonan/(:num)/status',
             'Admin::updateStatus/$1'
+        );
+
+        // Verifikasi bukti pengambilan mahasiswa
+        $routes->post(
+            'permohonan/(:num)/verifikasi-pengambilan',
+            'Admin::verifikasiPengambilan/$1'
         );
 
         // Tandai Permohonan Sudah Diambil

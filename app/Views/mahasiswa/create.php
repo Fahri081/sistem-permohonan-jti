@@ -40,6 +40,29 @@
     .file-input { position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:pointer; }
     .photo-counter { margin-top:10px; color:#667085; font-size:11.5px; }
     .preview-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px; margin-top:14px; }
+    .preview-heading {
+        margin-top: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+    }
+    .preview-heading strong {
+        color: #172033;
+        font-size: 12px;
+        font-weight: 800;
+    }
+    .preview-heading span {
+        color: #98A2B3;
+        font-size: 10.5px;
+    }
+    .preview-card {
+        position: relative;
+    }
+    .preview-image {
+        cursor: zoom-in;
+    }
+
     .preview-card { border:1px solid #E2E8F0; border-radius:12px; padding:7px; background:#fff; overflow:hidden; }
     .preview-image { width:100%; height:118px; object-fit:cover; border-radius:8px; display:block; background:#F3F6FA; }
     .preview-meta { padding:8px 2px 2px; display:flex; align-items:center; gap:7px; }
@@ -47,6 +70,59 @@
     .preview-name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:11.5px; font-weight:700; color:#334155; }
     .preview-size { margin-top:3px; color:#98A2B3; font-size:10.5px; }
     .remove-photo { width:28px; height:28px; border:0; border-radius:8px; background:#FEF2F2; color:#DC2626; cursor:pointer; font-size:12px; }
+    .preview-modal[hidden] { display:none; }
+    .preview-modal {
+        position:fixed; inset:0; z-index:9999;
+        display:grid; place-items:center;
+        padding:24px;
+    }
+    .preview-modal-backdrop {
+        position:absolute; inset:0;
+        background:rgba(13,32,56,.72);
+        backdrop-filter:blur(4px);
+    }
+    .preview-modal-content {
+        position:relative; z-index:1;
+        width:min(860px, 100%);
+        max-height:90vh;
+        padding:14px;
+        border-radius:16px;
+        background:#fff;
+        box-shadow:0 24px 60px rgba(13,32,56,.28);
+    }
+    .preview-modal-content img {
+        display:block;
+        width:100%;
+        max-height:76vh;
+        object-fit:contain;
+        border-radius:10px;
+        background:#F3F6FA;
+    }
+    .preview-modal-close {
+        position:absolute;
+        top:8px;
+        right:8px;
+        width:34px;
+        height:34px;
+        border:0;
+        border-radius:10px;
+        background:rgba(255,255,255,.94);
+        color:#334155;
+        font-size:22px;
+        line-height:1;
+        cursor:pointer;
+        box-shadow:0 4px 14px rgba(15,23,42,.10);
+    }
+    #previewModalCaption {
+        margin-top:9px;
+        color:#667085;
+        font-size:11px;
+        text-align:center;
+        overflow:hidden;
+        text-overflow:ellipsis;
+        white-space:nowrap;
+    }
+
     .notice { display:flex; gap:11px; padding:13px 14px; border-radius:11px; background:#F0F5FF; border:1px solid #D9E4FF; color:#33507D; font-size:11.5px; line-height:1.55; }
     .notice strong { color:#173B70; }
     .actions { margin-top:26px; padding-top:18px; border-top:1px solid #EEF2F7; display:flex; justify-content:flex-end; gap:10px; }
@@ -151,7 +227,23 @@
                 </div>
 
                 <div class="photo-counter" id="photoCounter">Belum ada foto dipilih.</div>
+
+                <div class="preview-heading" id="previewHeading" hidden>
+                    <strong>Preview foto</strong>
+                    <span>Klik foto untuk memperbesar</span>
+                </div>
+
                 <div class="preview-grid" id="photoPreviewGrid"></div>
+
+
+                <div class="preview-modal" id="previewModal" hidden>
+                    <div class="preview-modal-backdrop" data-close-preview></div>
+                    <div class="preview-modal-content">
+                        <button type="button" class="preview-modal-close" id="closePreviewModal" aria-label="Tutup preview">&times;</button>
+                        <img id="previewModalImage" src="" alt="Preview foto bukti pengumpulan">
+                        <div id="previewModalCaption"></div>
+                    </div>
+                </div>
 
                 <div class="actions">
                     <a href="<?= site_url('mahasiswa/permohonan') ?>" class="btn btn-secondary">Batal</a>
@@ -201,6 +293,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const dropzone = document.getElementById('dropzoneBox');
     const grid = document.getElementById('photoPreviewGrid');
     const counter = document.getElementById('photoCounter');
+    const previewHeading = document.getElementById('previewHeading');
+    const previewModal = document.getElementById('previewModal');
+    const previewModalImage = document.getElementById('previewModalImage');
+    const previewModalCaption = document.getElementById('previewModalCaption');
+    const closePreviewModal = document.getElementById('closePreviewModal');
     const submitBtn = document.getElementById('submitBtn');
     const maxPhotos = 10;
     const maxSize = 5 * 1024 * 1024;
@@ -223,6 +320,10 @@ document.addEventListener('DOMContentLoaded', function () {
             ? 'Belum ada foto dipilih.'
             : selectedFiles.length + ' foto dipilih. Maksimal ' + maxPhotos + ' foto.';
 
+        if (previewHeading) {
+            previewHeading.hidden = selectedFiles.length === 0;
+        }
+
         selectedFiles.forEach((file, index) => {
             const card = document.createElement('div');
             card.className = 'preview-card';
@@ -230,8 +331,19 @@ document.addEventListener('DOMContentLoaded', function () {
             const img = document.createElement('img');
             img.className = 'preview-image';
             img.alt = 'Preview ' + file.name;
+
             const reader = new FileReader();
-            reader.onload = e => img.src = e.target.result;
+            reader.onload = e => {
+                img.src = e.target.result;
+                img.addEventListener('click', function () {
+                    if (!previewModal || !previewModalImage) return;
+                    previewModalImage.src = e.target.result;
+                    if (previewModalCaption) {
+                        previewModalCaption.textContent = file.name;
+                    }
+                    previewModal.hidden = false;
+                });
+            };
             reader.readAsDataURL(file);
 
             const meta = document.createElement('div');
@@ -293,6 +405,29 @@ document.addEventListener('DOMContentLoaded', function () {
     ['dragenter','dragover'].forEach(type => dropzone.addEventListener(type, e => { e.preventDefault(); dropzone.classList.add('dragover'); }));
     ['dragleave','drop'].forEach(type => dropzone.addEventListener(type, e => { e.preventDefault(); dropzone.classList.remove('dragover'); }));
     dropzone.addEventListener('drop', e => addFiles(e.dataTransfer.files));
+
+
+    function closePreview() {
+        if (!previewModal) return;
+        previewModal.hidden = true;
+        if (previewModalImage) previewModalImage.src = '';
+        if (previewModalCaption) previewModalCaption.textContent = '';
+    }
+
+    if (closePreviewModal) {
+        closePreviewModal.addEventListener('click', closePreview);
+    }
+
+    if (previewModal) {
+        previewModal.addEventListener('click', function (e) {
+            if (
+                e.target === previewModal ||
+                e.target.hasAttribute('data-close-preview')
+            ) {
+                closePreview();
+            }
+        });
+    }
 
     form.addEventListener('submit', function (e) {
         syncInputFiles();

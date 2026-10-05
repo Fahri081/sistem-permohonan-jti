@@ -31,6 +31,7 @@ $currentUri = trim(uri_string(), '/');
 $dashboardActive = $currentUri === 'admin';
 $permohonanActive = $currentUri === 'admin/permohonan' || str_starts_with($currentUri, 'admin/permohonan/');
 $laporanActive = $currentUri === 'admin/laporan' || str_starts_with($currentUri, 'admin/laporan/');
+$usersActive = $currentUri === 'admin/users' || str_starts_with($currentUri, 'admin/users/');
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -58,7 +59,7 @@ $laporanActive = $currentUri === 'admin/laporan' || str_starts_with($currentUri,
             --surface: #ffffff;
             --surface-soft: #f8faff;
             --navy: #142e52;
-            --navy-dark: #0c2240;
+            --navy-dark: #0d2038;
             --royal: #2563eb;
             --royal-dark: #1d4ed8;
             --indigo: #4f46e5;
@@ -122,7 +123,7 @@ $laporanActive = $currentUri === 'admin/laporan' || str_starts_with($currentUri,
             width: var(--sidebar-width);
             background:
                 radial-gradient(circle at 95% 6%, rgba(79, 70, 229, .28), transparent 28%),
-                linear-gradient(180deg, #142e52 0%, #0e2747 100%);
+                linear-gradient(180deg, #142e52 0%, #0d2038 100%);
             color: #dbeafe;
             display: flex;
             flex-direction: column;
@@ -213,6 +214,23 @@ $laporanActive = $currentUri === 'admin/laporan' || str_starts_with($currentUri,
             color: #91acd0;
             transition: color .18s ease;
         }
+
+        .admin-nav-icon {
+    width: 18px;
+    height: 18px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 18px;
+
+    color: #91acd0;
+}
+
+.admin-nav-item.active .admin-nav-icon {
+    color: #fff;
+}
 
         .admin-nav-item:hover {
             color: #fff;
@@ -840,8 +858,25 @@ $laporanActive = $currentUri === 'admin/laporan' || str_starts_with($currentUri,
                 href="<?= site_url('admin') ?>"
                 class="admin-nav-item <?= $dashboardActive ? 'active' : '' ?>"
             >
-                <i class="fa-solid fa-grid-2"></i>
-                <span>Dashboard</span>
+                <span class="admin-nav-icon">
+    <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.9"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+    >
+        <rect x="3" y="3" width="7" height="7"></rect>
+        <rect x="14" y="3" width="7" height="7"></rect>
+        <rect x="14" y="14" width="7" height="7"></rect>
+        <rect x="3" y="14" width="7" height="7"></rect>
+    </svg>
+</span>
+
+<span>Dashboard</span>
             </a>
 
             <a
@@ -861,7 +896,23 @@ $laporanActive = $currentUri === 'admin/laporan' || str_starts_with($currentUri,
             </a>
 
         </nav>
+        <?php if (session('role') === 'super_admin'): ?>
 
+    <div class="sidebar-section-label">Administrasi</div>
+
+    <nav class="sidebar-nav">
+
+        <a
+            href="<?= site_url('admin/users') ?>"
+            class="admin-nav-item <?= $usersActive ? 'active' : '' ?>"
+        >
+            <i class="fa-solid fa-users-gear"></i>
+            <span>Manage User</span>
+</a>
+
+    </nav>
+
+<?php endif; ?>
         <div class="sidebar-spacer"></div>
 
         <div class="sidebar-help">
@@ -1065,6 +1116,8 @@ $laporanActive = $currentUri === 'admin/laporan' || str_starts_with($currentUri,
     </main>
 
 </div>
+
+<link rel="stylesheet" href="<?= base_url('assets/css/mobile-responsive.css') ?>">
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {

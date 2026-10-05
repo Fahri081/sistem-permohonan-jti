@@ -113,8 +113,8 @@
             ),
             linear-gradient(
                 135deg,
-                #173f70 0%,
-                #245d9d 52%,
+                #142E52 0%,
+                #2563EB 52%,
                 #4f46e5 100%
             );
 
@@ -174,7 +174,7 @@
         width: 7px;
         height: 7px;
         border-radius: 50%;
-        background: #86b8ff;
+        background: #93C5FD;
         box-shadow: 0 0 0 4px rgba(134,184,255,.12);
     }
 
@@ -221,7 +221,7 @@
         border-radius: 11px;
 
         background: #ffffff;
-        color: #173f70;
+        color: #142E52;
 
         font-size: 11.5px;
         font-weight: 800;
@@ -239,7 +239,7 @@
 
     .dash-primary-btn:hover {
         background: #f6f9ff;
-        color: #173f70;
+        color: #142E52;
 
         transform: translateY(-1px);
 
@@ -539,7 +539,7 @@
     }
 
     .request-id {
-        color: #173f70;
+        color: #142E52;
         font-size: 10.5px;
         font-weight: 800;
         white-space: nowrap;
@@ -616,7 +616,7 @@
 
     .status-diambil {
         background: #eef0ff;
-        color: #5148d9;
+        color: #4F46E5;
     }
 
     .request-action {
@@ -647,7 +647,7 @@
 
     .request-action:hover {
         color: #1d4ed8;
-        border-color: #bfd1f2;
+        border-color: #C8D6F2;
         background: #f5f8ff;
     }
 
