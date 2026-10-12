@@ -2124,7 +2124,16 @@
 
 
 
+        .notification-action-form {
+            margin: 0;
+        }
+
         .mark-all {
+            border: 0;
+            padding: 0;
+            background: transparent;
+            cursor: pointer;
+            font-family: inherit;
 
 
 
@@ -4172,7 +4181,9 @@
 
                 <!-- Keluar -->
 
-                <a href="<?= site_url('logout') ?>" class="nav-item logout">
+                <form action="<?= site_url('logout') ?>" method="post" class="logout-form" style="margin:0;">
+                    <?= csrf_field() ?>
+                    <button type="submit" class="nav-item logout" style="width:100%; border:0; background:transparent; font:inherit; text-align:left; cursor:pointer;">
 
                     <span class="nav-icon">
 
@@ -4191,7 +4202,8 @@
 
                     <span>Keluar</span>
 
-                </a>
+                </button>
+                </form>
 
 
 
@@ -4490,15 +4502,10 @@
 
 
 
-                                    <a href="<?= site_url('notifications/read-all') ?>" class="mark-all">
-
-
-
-                                        Tandai semua dibaca
-
-
-
-                                    </a>
+                                    <form action="<?= site_url('notifications/read-all') ?>" method="post" class="notification-action-form">
+                                        <?= csrf_field() ?>
+                                        <button type="submit" class="mark-all">Tandai semua dibaca</button>
+                                    </form>
 
 
 
@@ -4628,8 +4635,9 @@
 
 
 
-                                        <a href="<?= site_url('notifications/read/' . $notification['id_notifikasi']) ?>"
-                                            class="notification-item <?= (int) ($notification['dibaca'] ?? 0) === 0 ? 'unread' : '' ?>">
+                                        <form action="<?= site_url('notifications/read/' . $notification['id_notifikasi']) ?>" method="post" class="notification-action-form">
+                                            <?= csrf_field() ?>
+                                            <button type="submit" class="notification-item <?= (int) ($notification['dibaca'] ?? 0) === 0 ? 'unread' : '' ?>" style="width:100%; border-top:0; border-left:0; border-right:0; background:transparent; color:inherit; font:inherit; text-align:left; cursor:pointer;">
 
 
 
@@ -4747,7 +4755,8 @@
 
 
 
-                                        </a>
+                                            </button>
+                                        </form>
 
 
 

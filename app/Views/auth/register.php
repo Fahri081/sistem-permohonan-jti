@@ -451,6 +451,77 @@
                 0 14px 24px rgba(37, 99, 235, .23);
         }
 
+        .oauth-divider {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+
+            margin: 18px 0 13px;
+
+            color: #98A2B3;
+
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: lowercase;
+        }
+
+        .oauth-divider::before,
+        .oauth-divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .google-register-button {
+            width: 100%;
+            min-height: 48px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+
+            padding: 0 16px;
+
+            border: 1px solid #D8E0EB;
+            border-radius: 13px;
+
+            background: #fff;
+            color: #344054;
+
+            font: inherit;
+            font-size: 11px;
+            font-weight: 800;
+
+            text-decoration: none;
+
+            transition: .2s ease;
+        }
+
+        .google-register-button:hover {
+            border-color: #B8C7E5;
+            background: #F8FAFD;
+            transform: translateY(-1px);
+
+            box-shadow:
+                0 8px 18px rgba(20, 46, 82, .08);
+        }
+
+        .google-icon {
+            width: 22px;
+            height: 22px;
+
+            display: grid;
+            place-items: center;
+
+            flex: 0 0 22px;
+        }
+
+        .google-icon svg {
+            display: block;
+        }
+
         .login-link {
             margin-top: 18px;
 
@@ -736,7 +807,7 @@
                                 type="text"
                                 id="nama_lengkap"
                                 name="nama_lengkap"
-                                value="<?= old('nama_lengkap') ?>"
+                                value="<?= esc(old('nama_lengkap')) ?>"
                                 placeholder="Masukkan nama lengkap"
                                 autocomplete="name"
                                 required
@@ -767,9 +838,12 @@
                                 type="text"
                                 id="nim"
                                 name="nim"
-                                value="<?= old('nim') ?>"
+                                value="<?= esc(old('nim')) ?>"
                                 placeholder="Masukkan NIM"
                                 autocomplete="off"
+                                inputmode="numeric"
+                                pattern="[0-9]*"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                 required
                             >
 
@@ -798,7 +872,7 @@
                                 type="email"
                                 id="email"
                                 name="email"
-                                value="<?= old('email') ?>"
+                                value="<?= esc(old('email')) ?>"
                                 placeholder="Masukkan email aktif"
                                 autocomplete="email"
                                 required
@@ -829,9 +903,13 @@
                                 type="tel"
                                 id="no_hp"
                                 name="no_hp"
-                                value="<?= old('no_hp') ?>"
+                                value="<?= esc(old('no_hp')) ?>"
                                 placeholder="Contoh: 081234567890"
                                 autocomplete="tel"
+                                maxlength="15"
+                                inputmode="numeric"
+                                pattern="[0-9]*"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                             >
 
                         </div>
@@ -947,6 +1025,51 @@
                     </button>
 
                 </form>
+
+
+                <div class="oauth-divider">
+
+                    <span>atau daftar dengan</span>
+
+                </div>
+
+
+                <a
+                    href="<?= site_url('login/google?mode=register') ?>"
+                    class="google-register-button"
+                >
+
+                    <span class="google-icon" aria-hidden="true">
+                        <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+                            <path
+                                fill="#4285F4"
+                                d="M21.805 12.23c0-.79-.07-1.55-.22-2.27H12v4.3h5.49a4.69 4.69 0 0 1-2.04 3.08v2.56h3.3c1.93-1.78 3.05-4.39 3.05-7.67z"
+                            />
+                            <path
+                                fill="#34A853"
+                                d="M12 22c2.76 0 5.08-.91 6.77-2.47l-3.3-2.56c-.91.61-2.07.97-3.47.97-2.67 0-4.94-1.8-5.75-4.22H2.84v2.64A10.22 10.22 0 0 0 12 22z"
+                            />
+                            <path
+                                fill="#FBBC05"
+                                d="M6.25 13.72A6.15 6.15 0 0 1 5.92 12c0-.6.11-1.19.33-1.72V7.64H2.84A10 10 0 0 0 2 12c0 1.61.38 3.13 1.04 4.36l3.21-2.64z"
+                            />
+                            <path
+                                fill="#EA4335"
+                                d="M12 6.06c1.5 0 2.85.52 3.92 1.55l2.94-2.94C17.08 3.03 14.76 2 12 2A10.22 10.22 0 0 0 2.84 7.64l3.41 2.64C7.06 7.86 9.33 6.06 12 6.06z"
+                            />
+                        </svg>
+                    </span>
+
+                    <span>
+                        Daftar dengan akun Google Polinema
+                    </span>
+
+                </a>
 
 
                 <div class="login-link">

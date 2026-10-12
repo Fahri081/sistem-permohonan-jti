@@ -455,6 +455,10 @@ $usersActive = $currentUri === 'admin/users' || str_starts_with($currentUri, 'ad
             font-weight: 800;
         }
 
+        .notification-action-form {
+            margin: 0;
+        }
+
         .notification-mark-all {
             color: var(--royal);
             text-decoration: none;
@@ -924,10 +928,13 @@ $usersActive = $currentUri === 'admin/users' || str_starts_with($currentUri, 'ad
         </div>
 
         <div class="sidebar-bottom">
-            <a href="<?= site_url('logout') ?>" class="admin-nav-item logout">
+            <form action="<?= site_url('logout') ?>" method="post" class="logout-form" style="margin:0;">
+                <?= csrf_field() ?>
+                <button type="submit" class="admin-nav-item logout" style="width:100%; border:0; background:transparent; font:inherit; text-align:left; cursor:pointer;">
                 <i class="fa-solid fa-arrow-right-from-bracket"></i>
                 <span>Keluar</span>
-            </a>
+            </button>
+            </form>
         </div>
 
     </aside>
@@ -996,12 +1003,10 @@ $usersActive = $currentUri === 'admin/users' || str_starts_with($currentUri, 'ad
                             </div>
 
                             <?php if ($unreadCount > 0): ?>
-                                <a
-                                    href="<?= site_url('notifications/read-all') ?>"
-                                    class="notification-mark-all"
-                                >
-                                    Tandai semua dibaca
-                                </a>
+                                <form action="<?= site_url('notifications/read-all') ?>" method="post" class="notification-action-form" style="margin:0;">
+                                    <?= csrf_field() ?>
+                                    <button type="submit" class="notification-mark-all" style="border:0; padding:0; background:transparent; cursor:pointer; font-family:inherit; font-size:10.5px; font-weight:700; color:var(--royal);">Tandai semua dibaca</button>
+                                </form>
                             <?php endif; ?>
                         </div>
 
@@ -1022,10 +1027,9 @@ $usersActive = $currentUri === 'admin/users' || str_starts_with($currentUri, 'ad
 
                                 <?php foreach ($notifications as $notification): ?>
 
-                                    <a
-                                        href="<?= site_url('notifications/read/' . $notification['id_notifikasi']) ?>"
-                                        class="notification-item <?= (int) ($notification['dibaca'] ?? 1) === 0 ? 'unread' : '' ?>"
-                                    >
+                                    <form action="<?= site_url('notifications/read/' . $notification['id_notifikasi']) ?>" method="post" class="notification-action-form" style="margin:0;">
+                                        <?= csrf_field() ?>
+                                        <button type="submit" class="notification-item <?= (int) ($notification['dibaca'] ?? 1) === 0 ? 'unread' : '' ?>" style="width:100%; border:0; border-bottom:1px solid var(--border-light); background:transparent; color:inherit; font-family:inherit; text-align:left; cursor:pointer;">
 
                                         <div class="notification-item-icon">
                                             <i class="fa-regular fa-bell"></i>
@@ -1053,7 +1057,8 @@ $usersActive = $currentUri === 'admin/users' || str_starts_with($currentUri, 'ad
 
                                         </div>
 
-                                    </a>
+                                                                            </button>
+                                    </form>
 
                                 <?php endforeach; ?>
 

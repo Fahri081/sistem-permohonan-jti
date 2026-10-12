@@ -53,9 +53,8 @@ class Filters extends BaseFilters
      */
     public array $globals = [
         'before' => [
-            // Filter global tambahan bisa ditambahkan nanti.
-            // CSRF tidak dibuat global dulu agar kita lebih mudah
-            // mengembangkan form login dan pengajuan.
+            // Lindungi request yang mengubah data. Form POST memakai csrf_field().
+            'csrf',
         ],
 
         'after' => [

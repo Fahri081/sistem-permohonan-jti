@@ -10,15 +10,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <link
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet"
-    >
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    >
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <style>
         :root {
@@ -48,16 +43,12 @@
             color: var(--text);
 
             background:
-                radial-gradient(
-                    circle at 10% 15%,
+                radial-gradient(circle at 10% 15%,
                     rgba(37, 99, 235, .10),
-                    transparent 28%
-                ),
-                radial-gradient(
-                    circle at 90% 85%,
+                    transparent 28%),
+                radial-gradient(circle at 90% 85%,
                     rgba(79, 70, 229, .10),
-                    transparent 30%
-                ),
+                    transparent 30%),
                 var(--bg);
         }
 
@@ -101,11 +92,9 @@
 
             color: #fff;
             background:
-                linear-gradient(
-                    135deg,
+                linear-gradient(135deg,
                     var(--navy),
-                    var(--blue)
-                );
+                    var(--blue));
 
             font-size: 12px;
             font-weight: 800;
@@ -253,11 +242,9 @@
             color: #fff;
 
             background:
-                linear-gradient(
-                    135deg,
+                linear-gradient(135deg,
                     var(--blue),
-                    var(--indigo)
-                );
+                    var(--indigo));
 
             font: inherit;
             font-size: 12px;
@@ -320,253 +307,250 @@
 
 <body>
 
-<div class="page">
+    <div class="page">
 
-    <main class="card">
+        <main class="card">
 
-        <div class="brand">
+            <div class="brand">
 
-            <div class="brand-mark">
-                JTI
-            </div>
-
-            <div class="brand-name">
-
-                <strong>
-                    JTI Signature
-                </strong>
-
-                <span>
-                    Academic Services Portal
-                </span>
-
-            </div>
-
-        </div>
-
-
-        <div class="kicker">
-            Pendaftaran Akun Polinema
-        </div>
-
-        <h1>
-            Lengkapi data akun
-        </h1>
-
-        <p class="description">
-            Akun Google berhasil diverifikasi.
-            Lengkapi data mahasiswa berikut agar akun
-            dapat dibuat di JTI Signature.
-        </p>
-
-
-        <?php if (session()->getFlashdata('error')): ?>
-
-            <div class="alert">
-
-                <i class="fa-solid fa-circle-exclamation"></i>
-
-                <div>
-                    <?= esc(
-                        session()->getFlashdata('error')
-                    ) ?>
+                <div class="brand-mark">
+                    JTI
                 </div>
 
-            </div>
-
-        <?php endif; ?>
-
-
-        <?php if (session()->getFlashdata('errors')): ?>
-
-            <div class="alert">
-
-                <i class="fa-solid fa-circle-exclamation"></i>
-
-                <div>
+                <div class="brand-name">
 
                     <strong>
-                        Periksa kembali data:
+                        JTI Signature
                     </strong>
 
-                    <ul class="error-list">
-
-                        <?php foreach (
-                            session()->getFlashdata('errors')
-                            as $error
-                        ): ?>
-
-                            <li>
-                                <?= esc($error) ?>
-                            </li>
-
-                        <?php endforeach; ?>
-
-                    </ul>
+                    <span>
+                        Academic Services Portal
+                    </span>
 
                 </div>
 
             </div>
 
-        <?php endif; ?>
+
+            <div class="kicker">
+                Pendaftaran Akun Polinema
+            </div>
+
+            <h1>
+                Lengkapi data akun
+            </h1>
+
+            <p class="description">
+                Akun Google berhasil diverifikasi.
+                Lengkapi data mahasiswa dan buat password
+                untuk akun JTI Signature kamu.
+            </p>
 
 
-        <form
-            action="<?= site_url('register/google') ?>"
-            method="post"
-        >
+            <?php if (session()->getFlashdata('error')): ?>
 
-            <?= csrf_field() ?>
+                <div class="alert">
+
+                    <i class="fa-solid fa-circle-exclamation"></i>
+
+                    <div>
+                        <?= esc(
+                            session()->getFlashdata('error')
+                        ) ?>
+                    </div>
+
+                </div>
+
+            <?php endif; ?>
 
 
-            <div class="field">
+            <?php if (session()->getFlashdata('errors')): ?>
 
-                <label class="label">
-                    Nama Lengkap
-                </label>
+                <div class="alert">
 
-                <div class="box">
+                    <i class="fa-solid fa-circle-exclamation"></i>
 
-                    <i
-                        class="fa-regular fa-user icon"
-                    ></i>
+                    <div>
 
-                    <input
-                        type="text"
-                        value="<?= esc(
+                        <strong>
+                            Periksa kembali data:
+                        </strong>
+
+                        <ul class="error-list">
+
+                            <?php foreach (
+                                session()->getFlashdata('errors')
+                                as $error
+                            ): ?>
+
+                                <li>
+                                    <?= esc($error) ?>
+                                </li>
+
+                            <?php endforeach; ?>
+
+                        </ul>
+
+                    </div>
+
+                </div>
+
+            <?php endif; ?>
+
+
+            <form action="<?= site_url('register/google') ?>" method="post">
+
+                <?= csrf_field() ?>
+
+
+                <div class="field">
+
+                    <label class="label">
+                        Nama Lengkap
+                    </label>
+
+                    <div class="box">
+
+                        <i class="fa-regular fa-user icon"></i>
+
+                        <input type="text" value="<?= esc(
                             $googleRegistration['nama'] ?? ''
-                        ) ?>"
-                        readonly
-                    >
+                        ) ?>" readonly>
+
+                    </div>
 
                 </div>
 
-            </div>
 
+                <div class="field">
 
-            <div class="field">
+                    <label class="label">
+                        Email
+                    </label>
 
-                <label class="label">
-                    Email
-                </label>
+                    <div class="box">
 
-                <div class="box">
+                        <i class="fa-regular fa-envelope icon"></i>
 
-                    <i
-                        class="fa-regular fa-envelope icon"
-                    ></i>
-
-                    <input
-                        type="email"
-                        value="<?= esc(
+                        <input type="email" value="<?= esc(
                             $googleRegistration['email'] ?? ''
-                        ) ?>"
-                        readonly
-                    >
+                        ) ?>" readonly>
+
+                    </div>
 
                 </div>
 
-            </div>
 
+                <div class="field">
 
-            <div class="field">
+                    <label class="label" for="nim">
+                        NIM
+                    </label>
 
-                <label
-                    class="label"
-                    for="nim"
-                >
-                    NIM
-                </label>
+                    <div class="box">
 
-                <div class="box">
+                        <i class="fa-solid fa-id-card icon"></i>
 
-                    <i
-                        class="fa-solid fa-id-card icon"
-                    ></i>
+                        <input type="text" id="nim" name="nim" value="<?= esc(old('nim')) ?>" placeholder="Masukkan NIM"
+                            maxlength="20" inputmode="numeric" pattern="[0-9]*" autocomplete="off"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
 
-                    <input
-                        type="text"
-                        id="nim"
-                        name="nim"
-                        value="<?= old('nim') ?>"
-                        placeholder="Masukkan NIM"
-                        maxlength="20"
-                        required
-                    >
+                    </div>
 
                 </div>
 
-            </div>
 
+                <div class="field">
 
-            <div class="field">
+                    <label class="label" for="no_hp">
+                        Nomor HP
+                    </label>
 
-                <label
-                    class="label"
-                    for="no_hp"
-                >
-                    Nomor HP
-                </label>
+                    <div class="box">
 
-                <div class="box">
+                        <i class="fa-solid fa-phone icon"></i>
 
-                    <i
-                        class="fa-solid fa-phone icon"
-                    ></i>
+                        <input type="tel" id="no_hp" name="no_hp" value="<?= esc(old('no_hp')) ?>"
+                            placeholder="Contoh: 081234567890" maxlength="15" inputmode="numeric" pattern="[0-9]*"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '')">
 
-                    <input
-                        type="tel"
-                        id="no_hp"
-                        name="no_hp"
-                        value="<?= old('no_hp') ?>"
-                        placeholder="Contoh: 081234567890"
-                        maxlength="15"
-                    >
+                    </div>
 
                 </div>
 
-            </div>
+
+                <!-- PASSWORD -->
+                <div class="field">
+
+                    <label class="label" for="password">
+                        Password
+                    </label>
+
+                    <div class="box">
+
+                        <i class="fa-solid fa-lock icon"></i>
+
+                        <input type="password" id="password" name="password" placeholder="Minimal 6 karakter"
+                            autocomplete="new-password" required>
+
+                    </div>
+
+                </div>
 
 
-            <button
-                type="submit"
-                class="submit-button"
-            >
+                <!-- KONFIRMASI PASSWORD -->
+                <div class="field">
 
-                <i class="fa-solid fa-user-plus"></i>
+                    <label class="label" for="konfirmasi_password">
+                        Konfirmasi Password
+                    </label>
+
+                    <div class="box">
+
+                        <i class="fa-solid fa-lock icon"></i>
+
+                        <input type="password" id="konfirmasi_password" name="konfirmasi_password"
+                            placeholder="Ulangi password" autocomplete="new-password" required>
+
+                    </div>
+
+                </div>
+
+
+                <button type="submit" class="submit-button">
+
+                    <i class="fa-solid fa-user-plus"></i>
+
+                    &nbsp;
+
+                    Buat Akun & Masuk
+
+                </button>
+
+            </form>
+
+
+            <a class="back" href="<?= site_url('login') ?>">
+                ← Kembali ke halaman login
+            </a>
+
+
+            <div class="note">
+
+                <i class="fa-solid fa-circle-info"></i>
 
                 &nbsp;
 
-                Buat Akun & Masuk
+                Nama dan email diambil dari akun Google yang
+                digunakan. Setelah akun dibuat, email dan
+                Google ID akan tersimpan di database sistem.
 
-            </button>
+            </div>
 
-        </form>
+        </main>
 
-
-        <a
-            class="back"
-            href="<?= site_url('login') ?>"
-        >
-            ← Kembali ke halaman login
-        </a>
-
-
-        <div class="note">
-
-            <i class="fa-solid fa-circle-info"></i>
-
-            &nbsp;
-
-            Nama dan email diambil dari akun Google yang
-            digunakan. Setelah akun dibuat, email dan
-            Google ID akan tersimpan di database sistem.
-
-        </div>
-
-    </main>
-
-</div>
+    </div>
 
 </body>
+
 </html>

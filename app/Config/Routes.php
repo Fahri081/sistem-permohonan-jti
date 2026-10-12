@@ -59,7 +59,7 @@ $routes->post(
 );
 
 // Logout
-$routes->get(
+$routes->post(
     'logout',
     'Auth::logout'
 );
@@ -225,16 +225,45 @@ $routes->group(
             'Admin::verifikasiPengambilan/$1'
         );
 
-        // Tandai Permohonan Sudah Diambil
-        $routes->post(
-            'permohonan/(:num)/pickup',
-            'Admin::markPickedUp/$1'
-        );
-
         // Laporan
         $routes->get(
             'laporan',
             'Admin::laporan'
+        );
+
+        /*
+         * =====================================================
+         * MANAGE USER - KHUSUS SUPER ADMIN
+         * =====================================================
+         */
+        $routes->get(
+            'users',
+            'Admin::users',
+            ['filter' => 'role:super_admin']
+        );
+
+        $routes->get(
+            'users/(:num)',
+            'Admin::userDetail/$1',
+            ['filter' => 'role:super_admin']
+        );
+
+        $routes->get(
+            'users/(:num)/edit',
+            'Admin::editUser/$1',
+            ['filter' => 'role:super_admin']
+        );
+
+        $routes->post(
+            'users/(:num)/update',
+            'Admin::updateUser/$1',
+            ['filter' => 'role:super_admin']
+        );
+
+        $routes->post(
+            'users/(:num)/delete',
+            'Admin::deleteUser/$1',
+            ['filter' => 'role:super_admin']
         );
     }
 );
@@ -246,20 +275,23 @@ $routes->group(
 |--------------------------------------------------------------------------
 */
 
-// Daftar notifikasi
+// Daftar notifikasi — hanya pengguna aktif yang sudah login
 $routes->get(
     'notifications',
-    'Notification::index'
+    'Notification::index',
+    ['filter' => 'role:mahasiswa,admin,super_admin']
 );
 
-// Tandai satu notifikasi sudah dibaca
-$routes->get(
+// Tandai satu notifikasi sudah dibaca (POST + CSRF)
+$routes->post(
     'notifications/read/(:num)',
-    'Notification::read/$1'
+    'Notification::read/$1',
+    ['filter' => 'role:mahasiswa,admin,super_admin']
 );
 
-// Tandai semua notifikasi sudah dibaca
-$routes->get(
+// Tandai semua notifikasi sudah dibaca (POST + CSRF)
+$routes->post(
     'notifications/read-all',
-    'Notification::readAll'
+    'Notification::readAll',
+    ['filter' => 'role:mahasiswa,admin,super_admin']
 );

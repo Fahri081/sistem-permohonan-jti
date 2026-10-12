@@ -49,6 +49,8 @@
     }
 
     .notifications-mark-all {
+        appearance: none;
+        cursor: pointer;
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -89,6 +91,12 @@
     }
 
     .notification-card {
+        appearance: none;
+        width: 100%;
+        font: inherit;
+        color: inherit;
+        text-align: left;
+        cursor: pointer;
         position: relative;
 
         display: flex;
@@ -369,12 +377,10 @@
 
         <?php if (($unreadCount ?? 0) > 0): ?>
 
-            <a
-                href="<?= site_url('notifications/read-all') ?>"
-                class="notifications-mark-all"
-            >
-                Tandai semua sudah dibaca
-            </a>
+            <form action="<?= site_url('notifications/read-all') ?>" method="post" style="margin:0;">
+                <?= csrf_field() ?>
+                <button type="submit" class="notifications-mark-all">Tandai semua sudah dibaca</button>
+            </form>
 
         <?php endif; ?>
 
@@ -441,10 +447,9 @@
                 ?>
 
 
-                <a
-                    href="<?= site_url('notifications/read/' . $notification['id_notifikasi']) ?>"
-                    class="notification-card <?= $isUnread ? 'unread' : '' ?>"
-                >
+                <form action="<?= site_url('notifications/read/' . $notification['id_notifikasi']) ?>" method="post" style="margin:0;">
+                    <?= csrf_field() ?>
+                    <button type="submit" class="notification-card <?= $isUnread ? 'unread' : '' ?>">
 
                     <div
                         class="notification-card-icon"
@@ -518,7 +523,8 @@
 
                     <?php endif; ?>
 
-                </a>
+                                    </button>
+                </form>
 
             <?php endforeach; ?>
 
