@@ -1167,7 +1167,7 @@ $statusTimeline = [
 
                 <?php if ($buktiPengambilan && ! empty($buktiPengambilan['nama_file'])): ?>
                     <div style="margin-top:14px;">
-                        <img src="<?= esc(base_url('uploads/bukti_pengambilan/' . $buktiPengambilan['nama_file'])) ?>" alt="Bukti Pengambilan" style="width:100%;max-height:280px;object-fit:cover;border-radius:12px;border:1px solid #e2e8f0;display:block;">
+                        <img src="<?= esc(site_url('mahasiswa/permohonan/' . $idPermohonan . '/bukti-pengambilan/' . rawurlencode((string) $buktiPengambilan['nama_file']))) ?>" alt="Bukti Pengambilan" style="width:100%;max-height:280px;object-fit:cover;border-radius:12px;border:1px solid #e2e8f0;display:block;">
                         <?php if (($buktiPengambilan['status_verifikasi'] ?? '') === 'ditolak'): ?>
                             <div style="margin-top:10px;padding:10px 12px;border-radius:9px;background:#fff1f2;color:#991b1b;font-size:12px;line-height:1.5;">
                                 <strong>Bukti sebelumnya ditolak.</strong>
@@ -1296,7 +1296,7 @@ $statusTimeline = [
                         <?php
                             $namaFoto = $foto['nama_file'] ?? '';
                             $fotoUrl = $namaFoto !== ''
-                                ? base_url('uploads/bukti_fisik/' . $namaFoto)
+                                ? site_url('mahasiswa/permohonan/' . $idPermohonan . '/bukti-fisik/' . rawurlencode((string) $namaFoto))
                                 : '';
                         ?>
                         <?php if ($fotoUrl): ?>
@@ -1379,7 +1379,7 @@ $statusTimeline = [
                             $idBukti = (int) ($foto['id_bukti'] ?? 0);
                             $namaFoto = (string) ($foto['nama_file'] ?? '');
                             $fotoUrl = $namaFoto !== ''
-                                ? base_url('uploads/bukti_fisik/' . $namaFoto)
+                                ? site_url('mahasiswa/permohonan/' . $idPermohonan . '/bukti-fisik/' . rawurlencode((string) $namaFoto))
                                 : '';
                         ?>
                         <?php if ($idBukti > 0 && $fotoUrl): ?>

@@ -744,7 +744,7 @@ $buktiPengambilan = is_array($buktiPengambilan ?? null)
                             <?php
                                 $namaFoto = (string) ($foto['nama_file'] ?? '');
                                 $fotoUrl = $namaFoto !== ''
-                                    ? base_url('uploads/bukti_fisik/' . $namaFoto)
+                                    ? site_url('admin/permohonan/' . $idPermohonan . '/bukti-fisik/' . rawurlencode($namaFoto))
                                     : '';
                             ?>
 
@@ -814,7 +814,7 @@ $buktiPengambilan = is_array($buktiPengambilan ?? null)
                     $pickupNamaFile = (string) ($bukti['nama_file'] ?? '');
 
                     $pickupUrl = $pickupNamaFile !== ''
-                        ? base_url('uploads/bukti_pengambilan/' . $pickupNamaFile)
+                        ? site_url('admin/permohonan/' . $idPermohonan . '/bukti-pengambilan/' . rawurlencode($pickupNamaFile))
                         : '';
 
                     $pickupStatus = strtolower(

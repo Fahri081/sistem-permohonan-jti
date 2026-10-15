@@ -22,7 +22,7 @@
     <?php if (! empty($buktiFisik)) : ?>
         <div class="physical-proof-gallery">
             <?php foreach ($buktiFisik as $index => $foto) : ?>
-                <?php $fotoUrl = base_url('uploads/bukti_fisik/' . $foto['nama_file']); ?>
+                <?php $fotoUrl = site_url('mahasiswa/permohonan/' . (int) ($permohonan['id_permohonan'] ?? 0) . '/bukti-fisik/' . rawurlencode((string) $foto['nama_file'])); ?>
                 <a
                     href="<?= esc($fotoUrl) ?>"
                     target="_blank"

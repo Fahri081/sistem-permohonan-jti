@@ -131,3 +131,5 @@ _modules/*
 # OAuth / Google credentials
 client_secret*.json
 credentials*.json
+
+/writable/uploads/

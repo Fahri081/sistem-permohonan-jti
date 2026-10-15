@@ -133,6 +133,17 @@ $routes->group(
             'Mahasiswa::show/$1'
         );
 
+        // Foto bukti privat: hanya pemilik permohonan yang dapat melihat.
+        $routes->get(
+            'permohonan/(:num)/bukti-fisik/(:segment)',
+            'PrivateEvidence::mahasiswaBuktiFisik/$1/$2'
+        );
+
+        $routes->get(
+            'permohonan/(:num)/bukti-pengambilan/(:segment)',
+            'PrivateEvidence::mahasiswaBuktiPengambilan/$1/$2'
+        );
+
         // Konfirmasi pengambilan + upload bukti pengambilan
         $routes->post(
             'permohonan/(:num)/pengambilan',
@@ -211,6 +222,17 @@ $routes->group(
         $routes->get(
             'permohonan/(:num)',
             'Admin::show/$1'
+        );
+
+        // Foto bukti privat: admin dan super admin yang lolos filter role.
+        $routes->get(
+            'permohonan/(:num)/bukti-fisik/(:segment)',
+            'PrivateEvidence::adminBuktiFisik/$1/$2'
+        );
+
+        $routes->get(
+            'permohonan/(:num)/bukti-pengambilan/(:segment)',
+            'PrivateEvidence::adminBuktiPengambilan/$1/$2'
         );
 
         // Update Status Permohonan

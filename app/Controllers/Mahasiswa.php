@@ -9,6 +9,7 @@ use App\Models\PermohonanModel;
 use App\Models\TujuanModel;
 use App\Models\UserModel;
 use CodeIgniter\Controller;
+use CodeIgniter\Files\FileSizeUnit;
 
 class Mahasiswa extends Controller
 {
@@ -54,7 +55,7 @@ class Mahasiswa extends Controller
     {
         $userId = $this->getUserId();
 
-        if (! $userId) {
+        if (!$userId) {
             return redirect()
                 ->to('/login')
                 ->with(
@@ -138,7 +139,7 @@ class Mahasiswa extends Controller
     {
         $userId = $this->getUserId();
 
-        if (! $userId) {
+        if (!$userId) {
             return redirect()
                 ->to('/login')
                 ->with(
@@ -190,49 +191,49 @@ class Mahasiswa extends Controller
      * FORM AJUKAN PERMOHONAN
      * =====================================================
      */
-public function create()
-{
-    $userId = $this->getUserId();
+    public function create()
+    {
+        $userId = $this->getUserId();
 
-    if (! $userId) {
-        return redirect()
-            ->to('/login')
-            ->with('error', 'Silakan login terlebih dahulu.');
-    }
-
-    $tujuanRows = (new TujuanModel())
-        ->orderBy('nama_tujuan', 'ASC')
-        ->findAll();
-
-    // Hilangkan tujuan yang memiliki nama sama
-    // tanpa mengubah data tujuan di database.
-    $data['tujuan'] = [];
-    $seenTujuan = [];
-
-    foreach ($tujuanRows as $row) {
-        $namaTujuan = trim((string) ($row['nama_tujuan'] ?? ''));
-
-        $keyTujuan = function_exists('mb_strtolower')
-            ? mb_strtolower($namaTujuan, 'UTF-8')
-            : strtolower($namaTujuan);
-
-        if ($namaTujuan === '' || isset($seenTujuan[$keyTujuan])) {
-            continue;
+        if (!$userId) {
+            return redirect()
+                ->to('/login')
+                ->with('error', 'Silakan login terlebih dahulu.');
         }
 
-        $seenTujuan[$keyTujuan] = true;
-        $data['tujuan'][] = $row;
+        $tujuanRows = (new TujuanModel())
+            ->orderBy('nama_tujuan', 'ASC')
+            ->findAll();
+
+        // Hilangkan tujuan yang memiliki nama sama
+        // tanpa mengubah data tujuan di database.
+        $data['tujuan'] = [];
+        $seenTujuan = [];
+
+        foreach ($tujuanRows as $row) {
+            $namaTujuan = trim((string) ($row['nama_tujuan'] ?? ''));
+
+            $keyTujuan = function_exists('mb_strtolower')
+                ? mb_strtolower($namaTujuan, 'UTF-8')
+                : strtolower($namaTujuan);
+
+            if ($namaTujuan === '' || isset($seenTujuan[$keyTujuan])) {
+                continue;
+            }
+
+            $seenTujuan[$keyTujuan] = true;
+            $data['tujuan'][] = $row;
+        }
+
+        // Ambil data notifikasi agar icon/badge
+        // notifikasi tetap muncul di halaman Ajukan Permohonan.
+        $data = array_merge(
+            $data,
+            $this->notificationData($userId)
+        );
+
+        return view('mahasiswa/create', $data);
     }
-
-    // Ambil data notifikasi agar icon/badge
-    // notifikasi tetap muncul di halaman Ajukan Permohonan.
-    $data = array_merge(
-        $data,
-        $this->notificationData($userId)
-    );
-
-    return view('mahasiswa/create', $data);
-}
 
 
     /**
@@ -253,7 +254,7 @@ public function create()
     {
         $userId = $this->getUserId();
 
-        if (! $userId) {
+        if (!$userId) {
             return redirect()
                 ->to('/login')
                 ->with(
@@ -296,7 +297,7 @@ public function create()
          */
         $tujuanModel = new TujuanModel();
 
-        if (! $tujuanModel->find($idTujuan)) {
+        if (!$tujuanModel->find($idTujuan)) {
             return redirect()
                 ->back()
                 ->withInput()
@@ -315,8 +316,8 @@ public function create()
 
         $buktiFisikFiles =
             is_array($buktiFisikFiles)
-                ? $buktiFisikFiles
-                : [];
+            ? $buktiFisikFiles
+            : [];
 
         /*
          * Buang input file yang kosong
@@ -327,7 +328,7 @@ public function create()
                 static function ($file) {
                     return $file &&
                         $file->getError()
-                            !== UPLOAD_ERR_NO_FILE;
+                        !== UPLOAD_ERR_NO_FILE;
                 }
             )
         );
@@ -384,8 +385,8 @@ public function create()
         foreach ($buktiFisikFiles as $file) {
 
             if (
-                ! $file ||
-                ! $file->isValid() ||
+                !$file ||
+                !$file->isValid() ||
                 $file->hasMoved()
             ) {
                 return redirect()
@@ -398,7 +399,7 @@ public function create()
             }
 
             if (
-                ! in_array(
+                !in_array(
                     $file->getMimeType(),
                     $allowedMime,
                     true
@@ -414,7 +415,7 @@ public function create()
             }
 
             if (
-                $file->getSizeByUnit('mb') >
+                $file->getSizeByBinaryUnit(FileSizeUnit::MB) >
                 5
             ) {
                 return redirect()
@@ -442,8 +443,8 @@ public function create()
                     'keperluan' => $keperluan,
                     'deskripsi' =>
                         $deskripsi !== ''
-                            ? $deskripsi
-                            : null,
+                        ? $deskripsi
+                        : null,
 
                     /*
                      * Kolom lama tetap diisi
@@ -459,7 +460,7 @@ public function create()
                 true
             );
 
-        if (! $idPermohonan) {
+        if (!$idPermohonan) {
             return redirect()
                 ->back()
                 ->withInput()
@@ -476,17 +477,17 @@ public function create()
             new BuktiFisikPermohonanModel();
 
         $folderBukti =
-            FCPATH .
+            WRITEPATH .
             'uploads' .
             DIRECTORY_SEPARATOR .
             'bukti_fisik';
 
         if (
-            ! is_dir($folderBukti)
+            !is_dir($folderBukti)
         ) {
             mkdir(
                 $folderBukti,
-                0777,
+                0750,
                 true
             );
         }
@@ -606,7 +607,7 @@ public function create()
     {
         $userId = $this->getUserId();
 
-        if (! $userId) {
+        if (!$userId) {
             return redirect()
                 ->to('/login')
                 ->with(
@@ -643,7 +644,7 @@ public function create()
                 )
                 ->first();
 
-        if (! $permohonan) {
+        if (!$permohonan) {
             return redirect()
                 ->to(
                     site_url(
@@ -676,9 +677,9 @@ public function create()
          */
         if (
             empty($buktiFisik) &&
-            ! empty(
-                $permohonan['bukti_fisik']
-            )
+            !empty(
+            $permohonan['bukti_fisik']
+        )
         ) {
             $buktiFisik = [
                 [
@@ -786,7 +787,7 @@ public function create()
     {
         $userId = $this->getUserId();
 
-        if (! $userId) {
+        if (!$userId) {
             return redirect()
                 ->to('/login')
                 ->with(
@@ -806,7 +807,7 @@ public function create()
             ->where('id_user', $userId)
             ->first();
 
-        if (! $permohonan) {
+        if (!$permohonan) {
             return redirect()
                 ->to(site_url('mahasiswa/permohonan'))
                 ->with(
@@ -820,7 +821,7 @@ public function create()
          * ketika status Diajukan atau Ditolak.
          */
         if (
-            ! in_array(
+            !in_array(
                 (int) $permohonan['id_status'],
                 [1, 3],
                 true
@@ -921,7 +922,7 @@ public function create()
 
         foreach ($files as $file) {
             if (
-                ! $file->isValid()
+                !$file->isValid()
                 || $file->hasMoved()
             ) {
                 return redirect()
@@ -933,7 +934,7 @@ public function create()
             }
 
             if (
-                ! in_array(
+                !in_array(
                     $file->getMimeType(),
                     $allowedMime,
                     true
@@ -947,7 +948,7 @@ public function create()
                     );
             }
 
-            if ($file->getSizeByUnit('mb') > 5) {
+            if ($file->getSizeByBinaryUnit(FileSizeUnit::MB) > 5) {
                 return redirect()
                     ->back()
                     ->with(
@@ -961,15 +962,15 @@ public function create()
          * Folder foto.
          */
         $folder =
-            FCPATH .
+            WRITEPATH .
             'uploads' .
             DIRECTORY_SEPARATOR .
             'bukti_fisik';
 
-        if (! is_dir($folder)) {
+        if (!is_dir($folder)) {
             mkdir(
                 $folder,
-                0777,
+                0750,
                 true
             );
         }
@@ -980,7 +981,7 @@ public function create()
          */
         $keptIdsLookup = array_fill_keys(
             array_map(
-                static fn (array $row): int => (int) $row['id_bukti'],
+                static fn(array $row): int => (int) $row['id_bukti'],
                 $keptExisting
             ),
             true
@@ -991,7 +992,7 @@ public function create()
         foreach ($existing as $row) {
             $idBukti = (int) $row['id_bukti'];
 
-            if (! isset($keptIdsLookup[$idBukti])) {
+            if (!isset($keptIdsLookup[$idBukti])) {
                 $oldFilesToDelete[] = $folder
                     . DIRECTORY_SEPARATOR
                     . $row['nama_file'];
@@ -1005,7 +1006,7 @@ public function create()
         $db->transBegin();
 
         $newFilePaths = [];
-        $insertedIds  = [];
+        $insertedIds = [];
 
         try {
             /*
@@ -1015,7 +1016,7 @@ public function create()
             foreach ($existing as $row) {
                 $idBukti = (int) $row['id_bukti'];
 
-                if (! isset($keptIdsLookup[$idBukti])) {
+                if (!isset($keptIdsLookup[$idBukti])) {
                     $buktiModel->delete($idBukti);
                 }
             }
@@ -1038,12 +1039,12 @@ public function create()
                 $insertedId = $buktiModel->insert(
                     [
                         'id_permohonan' => $id,
-                        'nama_file'     => $namaFoto,
+                        'nama_file' => $namaFoto,
                     ],
                     true
                 );
 
-                if (! $insertedId) {
+                if (!$insertedId) {
                     throw new \RuntimeException(
                         'Gagal menyimpan data foto bukti fisik.'
                     );
@@ -1082,13 +1083,13 @@ public function create()
                 $updateData['keterangan_penolakan'] = null;
             }
 
-            if (! $permohonanModel->update($id, $updateData)) {
+            if (!$permohonanModel->update($id, $updateData)) {
                 throw new \RuntimeException(
                     'Gagal memperbarui permohonan.'
                 );
             }
 
-            if (! $db->transStatus()) {
+            if (!$db->transStatus()) {
                 throw new \RuntimeException(
                     'Transaksi database gagal.'
                 );
@@ -1166,274 +1167,274 @@ public function create()
             );
     }
 
-/**
- * =====================================================
- * REUPLOAD LAMA
- * =====================================================
- *
- * Method ini dipertahankan supaya route lama
- * tidak menghasilkan "method not found".
- *
- * Sistem baru menggunakan updateBuktiFisik().
- */
-
-/**
- * =====================================================
- * KONFIRMASI PENGAMBILAN DOKUMEN
- * =====================================================
- *
- * Mahasiswa mengunggah foto bukti pengambilan.
- * Setelah foto berhasil disimpan:
- * - Bukti otomatis dianggap diterima
- * - Status permohonan langsung menjadi Diambil
- */
-public function submitBuktiPengambilan(int $id)
-{
-    $userId = $this->getUserId();
-
-    if (! $userId) {
-        return redirect()
-            ->to('/login')
-            ->with(
-                'error',
-                'Silakan login terlebih dahulu.'
-            );
-    }
-
-    $permohonanModel = new PermohonanModel();
-
-    /*
-     * Pastikan permohonan milik mahasiswa yang login.
-     */
-    $permohonan = $permohonanModel
-        ->where('id_permohonan', $id)
-        ->where('id_user', $userId)
-        ->first();
-
-    if (! $permohonan) {
-        return redirect()
-            ->to(site_url('mahasiswa/permohonan'))
-            ->with(
-                'error',
-                'Permohonan tidak ditemukan.'
-            );
-    }
-
-    /*
-     * Bukti pengambilan hanya boleh dikirim
-     * ketika status permohonan = Selesai.
+    /**
+     * =====================================================
+     * REUPLOAD LAMA
+     * =====================================================
      *
-     * 4 = Selesai
+     * Method ini dipertahankan supaya route lama
+     * tidak menghasilkan "method not found".
+     *
+     * Sistem baru menggunakan updateBuktiFisik().
      */
-    if ((int) $permohonan['id_status'] !== 4) {
-        return redirect()
-            ->back()
-            ->with(
-                'error',
-                'Bukti pengambilan hanya dapat dikirim setelah permohonan berstatus Selesai.'
-            );
-    }
 
-    /*
-     * Ambil beberapa foto sekaligus.
+    /**
+     * =====================================================
+     * KONFIRMASI PENGAMBILAN DOKUMEN
+     * =====================================================
+     *
+     * Mahasiswa mengunggah foto bukti pengambilan.
+     * Setelah foto berhasil disimpan:
+     * - Bukti otomatis dianggap diterima
+     * - Status permohonan langsung menjadi Diambil
      */
-    $files = $this->request
-        ->getFileMultiple('bukti_pengambilan');
+    public function submitBuktiPengambilan(int $id)
+    {
+        $userId = $this->getUserId();
 
-    if (empty($files)) {
-        return redirect()
-            ->back()
-            ->with(
-                'error',
-                'Silakan pilih minimal satu foto bukti pengambilan.'
-            );
-    }
+        if (!$userId) {
+            return redirect()
+                ->to('/login')
+                ->with(
+                    'error',
+                    'Silakan login terlebih dahulu.'
+                );
+        }
 
-    /*
-     * Maksimal 10 foto.
-     */
-    if (count($files) > 10) {
-        return redirect()
-            ->back()
-            ->with(
-                'error',
-                'Maksimal 10 foto bukti pengambilan dalam satu kali pengiriman.'
-            );
-    }
+        $permohonanModel = new PermohonanModel();
 
-    /*
-     * Jenis file yang diizinkan.
-     */
-    $allowedMime = [
-        'image/jpeg',
-        'image/png',
-        'image/jpg',
-        'image/webp',
-    ];
+        /*
+         * Pastikan permohonan milik mahasiswa yang login.
+         */
+        $permohonan = $permohonanModel
+            ->where('id_permohonan', $id)
+            ->where('id_user', $userId)
+            ->first();
 
-    /*
-     * Validasi SEMUA file terlebih dahulu.
-     */
-    foreach ($files as $file) {
+        if (!$permohonan) {
+            return redirect()
+                ->to(site_url('mahasiswa/permohonan'))
+                ->with(
+                    'error',
+                    'Permohonan tidak ditemukan.'
+                );
+        }
 
-        if (
-            ! $file ||
-            $file->getError() !== UPLOAD_ERR_OK ||
-            $file->hasMoved()
-        ) {
-            $uploadError = $file
-                ? $file->getError()
-                : null;
-
-            $message = match ($uploadError) {
-
-                UPLOAD_ERR_INI_SIZE,
-                UPLOAD_ERR_FORM_SIZE =>
-                    'Ada foto yang melebihi batas ukuran upload server.',
-
-                UPLOAD_ERR_PARTIAL =>
-                    'Ada foto yang hanya terupload sebagian. Silakan pilih ulang foto.',
-
-                UPLOAD_ERR_NO_FILE =>
-                    'Silakan pilih minimal satu foto bukti pengambilan.',
-
-                default =>
-                    'Ada file bukti pengambilan yang tidak valid.',
-            };
-
+        /*
+         * Bukti pengambilan hanya boleh dikirim
+         * ketika status permohonan = Selesai.
+         *
+         * 4 = Selesai
+         */
+        if ((int) $permohonan['id_status'] !== 4) {
             return redirect()
                 ->back()
                 ->with(
                     'error',
-                    $message
+                    'Bukti pengambilan hanya dapat dikirim setelah permohonan berstatus Selesai.'
                 );
         }
 
-        if (
-            ! in_array(
-                $file->getMimeType(),
-                $allowedMime,
+        /*
+         * Ambil beberapa foto sekaligus.
+         */
+        $files = $this->request
+            ->getFileMultiple('bukti_pengambilan');
+
+        if (empty($files)) {
+            return redirect()
+                ->back()
+                ->with(
+                    'error',
+                    'Silakan pilih minimal satu foto bukti pengambilan.'
+                );
+        }
+
+        /*
+         * Maksimal 10 foto.
+         */
+        if (count($files) > 10) {
+            return redirect()
+                ->back()
+                ->with(
+                    'error',
+                    'Maksimal 10 foto bukti pengambilan dalam satu kali pengiriman.'
+                );
+        }
+
+        /*
+         * Jenis file yang diizinkan.
+         */
+        $allowedMime = [
+            'image/jpeg',
+            'image/png',
+            'image/jpg',
+            'image/webp',
+        ];
+
+        /*
+         * Validasi SEMUA file terlebih dahulu.
+         */
+        foreach ($files as $file) {
+
+            if (
+                !$file ||
+                $file->getError() !== UPLOAD_ERR_OK ||
+                $file->hasMoved()
+            ) {
+                $uploadError = $file
+                    ? $file->getError()
+                    : null;
+
+                $message = match ($uploadError) {
+
+                    UPLOAD_ERR_INI_SIZE,
+                    UPLOAD_ERR_FORM_SIZE =>
+                        'Ada foto yang melebihi batas ukuran upload server.',
+
+                    UPLOAD_ERR_PARTIAL =>
+                        'Ada foto yang hanya terupload sebagian. Silakan pilih ulang foto.',
+
+                    UPLOAD_ERR_NO_FILE =>
+                        'Silakan pilih minimal satu foto bukti pengambilan.',
+
+                    default =>
+                        'Ada file bukti pengambilan yang tidak valid.',
+                };
+
+                return redirect()
+                    ->back()
+                    ->with(
+                        'error',
+                        $message
+                    );
+            }
+
+            if (
+                !in_array(
+                    $file->getMimeType(),
+                    $allowedMime,
+                    true
+                )
+            ) {
+                return redirect()
+                    ->back()
+                    ->with(
+                        'error',
+                        'Semua foto harus berupa JPG, JPEG, PNG, atau WEBP.'
+                    );
+            }
+
+            if (
+                $file->getSizeByBinaryUnit(FileSizeUnit::MB)
+            ) {
+                return redirect()
+                    ->back()
+                    ->with(
+                        'error',
+                        'Setiap foto maksimal berukuran 5 MB.'
+                    );
+            }
+        }
+
+        /*
+         * Folder penyimpanan.
+         */
+        $folder =
+            WRITEPATH .
+            'uploads' .
+            DIRECTORY_SEPARATOR .
+            'bukti_pengambilan';
+
+        if (!is_dir($folder)) {
+            mkdir(
+                $folder,
+                0750,
                 true
-            )
-        ) {
+            );
+        }
+
+        $buktiModel =
+            new BuktiPengambilanPermohonanModel();
+
+        /*
+         * Simpan semua foto.
+         * Karena tidak ada verifikasi admin,
+         * status bukti langsung diterima.
+         */
+        foreach ($files as $file) {
+
+            $namaFile =
+                $file->getRandomName();
+
+            $file->move(
+                $folder,
+                $namaFile
+            );
+
+            $buktiModel->insert(
+                [
+                    'id_permohonan' =>
+                        $id,
+
+                    'nama_file' =>
+                        $namaFile,
+
+                    'status_verifikasi' =>
+                        'diterima',
+
+                    'keterangan' =>
+                        'Bukti pengambilan dikonfirmasi oleh mahasiswa.',
+                ]
+            );
+        }
+
+        /*
+         * Setelah mahasiswa mengirim bukti,
+         * langsung ubah status menjadi Diambil.
+         *
+         * 5 = Diambil
+         */
+        $updated =
+            $permohonanModel->update(
+                $id,
+                [
+                    'id_status' =>
+                        5,
+
+                    'tanggal_diambil' =>
+                        date('Y-m-d H:i:s'),
+                ]
+            );
+
+        if (!$updated) {
             return redirect()
                 ->back()
                 ->with(
                     'error',
-                    'Semua foto harus berupa JPG, JPEG, PNG, atau WEBP.'
+                    'Foto berhasil diunggah tetapi status permohonan gagal diperbarui.'
                 );
         }
 
-        if (
-            $file->getSizeByUnit('mb') > 5
-        ) {
-            return redirect()
-                ->back()
-                ->with(
-                    'error',
-                    'Setiap foto maksimal berukuran 5 MB.'
-                );
-        }
-    }
+        $jumlahFoto =
+            count($files);
 
-    /*
-     * Folder penyimpanan.
-     */
-    $folder =
-        FCPATH .
-        'uploads' .
-        DIRECTORY_SEPARATOR .
-        'bukti_pengambilan';
-
-    if (! is_dir($folder)) {
-        mkdir(
-            $folder,
-            0777,
-            true
-        );
-    }
-
-    $buktiModel =
-        new BuktiPengambilanPermohonanModel();
-
-    /*
-     * Simpan semua foto.
-     * Karena tidak ada verifikasi admin,
-     * status bukti langsung diterima.
-     */
-    foreach ($files as $file) {
-
-        $namaFile =
-            $file->getRandomName();
-
-        $file->move(
-            $folder,
-            $namaFile
-        );
-
-        $buktiModel->insert(
-            [
-                'id_permohonan' =>
-                    $id,
-
-                'nama_file' =>
-                    $namaFile,
-
-                'status_verifikasi' =>
-                    'diterima',
-
-                'keterangan' =>
-                    'Bukti pengambilan dikonfirmasi oleh mahasiswa.',
-            ]
-        );
-    }
-
-    /*
-     * Setelah mahasiswa mengirim bukti,
-     * langsung ubah status menjadi Diambil.
-     *
-     * 5 = Diambil
-     */
-    $updated =
-        $permohonanModel->update(
-            $id,
-            [
-                'id_status' =>
-                    5,
-
-                'tanggal_diambil' =>
-                    date('Y-m-d H:i:s'),
-            ]
-        );
-
-    if (! $updated) {
+        /*
+         * Redirect kembali ke detail permohonan.
+         */
         return redirect()
-            ->back()
+            ->to(
+                site_url(
+                    'mahasiswa/permohonan/' .
+                    $id
+                )
+            )
             ->with(
-                'error',
-                'Foto berhasil diunggah tetapi status permohonan gagal diperbarui.'
+                'success',
+                $jumlahFoto .
+                ' foto bukti pengambilan berhasil disimpan. Permohonan telah berstatus Diambil.'
             );
     }
-
-    $jumlahFoto =
-        count($files);
-
-    /*
-     * Redirect kembali ke detail permohonan.
-     */
-    return redirect()
-        ->to(
-            site_url(
-                'mahasiswa/permohonan/' .
-                $id
-            )
-        )
-        ->with(
-            'success',
-            $jumlahFoto .
-            ' foto bukti pengambilan berhasil disimpan. Permohonan telah berstatus Diambil.'
-        );
-}
 
     public function reupload(int $id)
     {
@@ -1460,7 +1461,7 @@ public function submitBuktiPengambilan(int $id)
     {
         $userId = $this->getUserId();
 
-        if (! $userId) {
+        if (!$userId) {
             return redirect()
                 ->to('/login')
                 ->with(
@@ -1474,7 +1475,7 @@ public function submitBuktiPengambilan(int $id)
                 ->find($userId);
 
         if (
-            ! $user ||
+            !$user ||
             $user['role'] !==
             'mahasiswa'
         ) {
@@ -1510,7 +1511,7 @@ public function submitBuktiPengambilan(int $id)
     {
         $userId = $this->getUserId();
 
-        if (! $userId) {
+        if (!$userId) {
             return redirect()
                 ->to('/login')
                 ->with(
@@ -1557,7 +1558,7 @@ public function submitBuktiPengambilan(int $id)
         }
 
         if (
-            ! filter_var(
+            !filter_var(
                 $email,
                 FILTER_VALIDATE_EMAIL
             )
@@ -1607,8 +1608,8 @@ public function submitBuktiPengambilan(int $id)
 
                 'no_hp' =>
                     $noHp !== ''
-                        ? $noHp
-                        : null,
+                    ? $noHp
+                    : null,
             ]
         );
 
@@ -1631,37 +1632,37 @@ public function submitBuktiPengambilan(int $id)
             );
     }
     /**
- * =====================================================
- * UPDATE FOTO PROFIL MAHASISWA
- * =====================================================
- */
-public function updateFotoProfil()
-{
-    $userId = $this->getUserId();
+     * =====================================================
+     * UPDATE FOTO PROFIL MAHASISWA
+     * =====================================================
+     */
+    public function updateFotoProfil()
+    {
+        $userId = $this->getUserId();
 
-    if (! $userId) {
-        return redirect()
-            ->to('/login')
-            ->with(
-                'error',
-                'Silakan login terlebih dahulu.'
-            );
-    }
+        if (!$userId) {
+            return redirect()
+                ->to('/login')
+                ->with(
+                    'error',
+                    'Silakan login terlebih dahulu.'
+                );
+        }
 
-    $file = $this->request->getFile('foto_profil');
+        $file = $this->request->getFile('foto_profil');
 
-    // Pastikan file memang dipilih
-    if (! $file || $file->getError() === UPLOAD_ERR_NO_FILE) {
-        return redirect()
-            ->to(site_url('mahasiswa/profil'))
-            ->with(
-                'error',
-                'Silakan pilih foto terlebih dahulu.'
-            );
-    }
+        // Pastikan file memang dipilih
+        if (!$file || $file->getError() === UPLOAD_ERR_NO_FILE) {
+            return redirect()
+                ->to(site_url('mahasiswa/profil'))
+                ->with(
+                    'error',
+                    'Silakan pilih foto terlebih dahulu.'
+                );
+        }
 
         // Validasi upload
-        if (! $file->isValid() || $file->hasMoved()) {
+        if (!$file->isValid() || $file->hasMoved()) {
             return redirect()
                 ->to(site_url('mahasiswa/profil'))
                 ->with(
@@ -1691,7 +1692,7 @@ public function updateFotoProfil()
             (string) $file->getMimeType()
         );
 
-        if (! in_array($mimeType, $allowedMime, true)) {
+        if (!in_array($mimeType, $allowedMime, true)) {
             return redirect()
                 ->to(site_url('mahasiswa/profil'))
                 ->with(
@@ -1704,7 +1705,7 @@ public function updateFotoProfil()
 
         $user = $userModel->find($userId);
 
-        if (! $user || $user['role'] !== 'mahasiswa') {
+        if (!$user || $user['role'] !== 'mahasiswa') {
             return redirect()
                 ->to(site_url('mahasiswa'))
                 ->with(
@@ -1714,24 +1715,24 @@ public function updateFotoProfil()
         }
 
         /*
-        * Folder penyimpanan foto profil
-        */
+         * Folder penyimpanan foto profil
+         */
         $folder = FCPATH . 'uploads/profil';
 
-        if (! is_dir($folder)) {
+        if (!is_dir($folder)) {
             mkdir($folder, 0777, true);
         }
 
         /*
-        * Nama file acak agar aman dan tidak bentrok
-        */
+         * Nama file acak agar aman dan tidak bentrok
+         */
         $namaFileBaru = $file->getRandomName();
 
         /*
-        * Simpan file ke:
-        * public/uploads/profil/
-        */
-        if (! $file->move($folder, $namaFileBaru)) {
+         * Simpan file ke:
+         * public/uploads/profil/
+         */
+        if (!$file->move($folder, $namaFileBaru)) {
             return redirect()
                 ->to(site_url('mahasiswa/profil'))
                 ->with(
@@ -1741,15 +1742,15 @@ public function updateFotoProfil()
         }
 
         /*
-        * Nama foto lama
-        */
+         * Nama foto lama
+         */
         $namaFileLama = trim(
             (string) ($user['foto_profil'] ?? '')
         );
 
         /*
-        * Update database
-        */
+         * Update database
+         */
         $updated = $userModel->update(
             $userId,
             [
@@ -1757,7 +1758,7 @@ public function updateFotoProfil()
             ]
         );
 
-        if (! $updated) {
+        if (!$updated) {
 
             // Hapus foto baru jika database gagal di-update
             $fileBaru = $folder . DIRECTORY_SEPARATOR . $namaFileBaru;
@@ -1775,9 +1776,9 @@ public function updateFotoProfil()
         }
 
         /*
-        * Hapus foto lama setelah
-        * database berhasil diperbarui
-        */
+         * Hapus foto lama setelah
+         * database berhasil diperbarui
+         */
         if ($namaFileLama !== '') {
 
             $fileLama = $folder
@@ -1790,9 +1791,9 @@ public function updateFotoProfil()
         }
 
         /*
-        * Simpan ke session supaya topbar
-        * bisa langsung menggunakan foto baru.
-        */
+         * Simpan ke session supaya topbar
+         * bisa langsung menggunakan foto baru.
+         */
         session()->set([
             'foto_profil' => $namaFileBaru,
         ]);
@@ -1814,7 +1815,7 @@ public function updateFotoProfil()
     {
         $userId = $this->getUserId();
 
-        if (! $userId) {
+        if (!$userId) {
             return redirect()
                 ->to('/login')
                 ->with(
@@ -1843,7 +1844,7 @@ public function updateFotoProfil()
     {
         $userId = $this->getUserId();
 
-        if (! $userId) {
+        if (!$userId) {
             return redirect()
                 ->to('/login')
                 ->with(
@@ -1916,8 +1917,8 @@ public function updateFotoProfil()
             );
 
         if (
-            ! $user ||
-            ! password_verify(
+            !$user ||
+            !password_verify(
                 $passwordLama,
                 $user['password']
             )
