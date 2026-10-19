@@ -1326,7 +1326,7 @@ class Mahasiswa extends Controller
             }
 
             if (
-                $file->getSizeByBinaryUnit(FileSizeUnit::MB)
+                $file->getSizeByBinaryUnit(FileSizeUnit::MB) > 5
             ) {
                 return redirect()
                     ->back()
