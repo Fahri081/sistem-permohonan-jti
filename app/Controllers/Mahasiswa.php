@@ -415,8 +415,7 @@ class Mahasiswa extends Controller
             }
 
             if (
-                $file->getSizeByBinaryUnit(FileSizeUnit::MB) >
-                5
+                $file->getSizeByUnit('mb') > 5
             ) {
                 return redirect()
                     ->back()
@@ -948,7 +947,7 @@ class Mahasiswa extends Controller
                     );
             }
 
-            if ($file->getSizeByBinaryUnit(FileSizeUnit::MB) > 5) {
+            if ($file->getSizeByUnit('mb') > 5) {
                 return redirect()
                     ->back()
                     ->with(
@@ -1326,7 +1325,7 @@ class Mahasiswa extends Controller
             }
 
             if (
-                $file->getSizeByBinaryUnit(FileSizeUnit::MB) > 5
+                $file->getSizeByUnit('mb') > 5
             ) {
                 return redirect()
                     ->back()
