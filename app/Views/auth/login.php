@@ -661,7 +661,7 @@
                         </a>
                     </div>
 
-                    <div class="divider">AKUN DEMO</div>
+                    <!-- <div class="divider">AKUN DEMO</div>
 
                     <div class="demo-box">
                         <div class="demo-title">Untuk pengujian lokal</div>
@@ -677,7 +677,7 @@
                                 &nbsp; Admin
                             </button>
                         </div>
-                    </div>
+                    </div> -->
 
                     <div class="help">
                         <strong>Butuh bantuan akses?</strong><br>
