@@ -38,6 +38,8 @@ class Kint
     | RichRenderer Settings
     |--------------------------------------------------------------------------
     */
+    // Tambahkan baris ini:
+    public int $richSort = 0;
     public string $richTheme = 'aante-light.css';
     public bool $richFolder  = false;
 
